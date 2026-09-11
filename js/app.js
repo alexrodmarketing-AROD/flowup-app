@@ -1,8 +1,7 @@
 /**
  * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v130
+ * FLOWUP CRM v131 — CORS Fix & Master Panel Support
  */
-const API_URL = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
 
 // ── APP STATE & SESSION ───────────────────────────────────────────────────────
 let currentUser = null;
@@ -39,17 +38,30 @@ function resolveCompanyId() {
 }
 
 // ── UNIFIED REST API CLIENT ───────────────────────────────────────────────────
+const _GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
+
 async function apiCall(action, payload = {}) {
+  // Google Apps Script requiere:
+  //  - Content-Type: text/plain;charset=utf-8  → evita preflight OPTIONS (CORS bypass)
+  //  - redirect: "follow"                      → sigue la redirección 302 de GAS sin bloquear
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(_GAS_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, ...payload })
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({ action, ...payload }),
+      redirect: "follow"
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    }
+
     return await response.json();
   } catch (err) {
     console.error("[FLOWUP API ERROR]", err);
-    return { status: "ERROR", message: err.message || "Error de conexión con la API del servidor." };
+    return { status: "ERROR", message: err.message || "Error de conexión con el servidor. Verifique su conexión a internet." };
   }
 }
 
@@ -264,3 +276,83 @@ window.submitEditSeller = submitEditSeller;
 window.deleteSeller = deleteSeller;
 window.executeDeleteSeller = executeDeleteSeller;
 window.showToast = showToast;
+
+// ── MASTER PANEL FUNCTIONS ────────────────────────────────────────────────────
+/**
+ * Autenticación exclusiva para SuperAdmin.
+ * Llama a `authenticateMaster` en el backend.
+ * Guarda la sesión como tipo 'MASTER' en sessionStorage (no localStorage).
+ */
+async function loginMaster(email, password) {
+  const res = await apiCall('authenticateMaster', { email, password });
+  if (res.status === 'SUCCESS' && res.data) {
+    sessionStorage.setItem('flowup_master_session', JSON.stringify(res.data));
+    showToast('Acceso Master concedido.', 'success');
+    return { ok: true, data: res.data };
+  } else {
+    showToast(res.message || 'Credenciales de Master incorrectas.', 'error');
+    return { ok: false };
+  }
+}
+
+function getMasterSession() {
+  try {
+    const raw = sessionStorage.getItem('flowup_master_session');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function logoutMaster() {
+  sessionStorage.removeItem('flowup_master_session');
+  window.location.reload();
+}
+
+async function loadMasterMetrics() {
+  const session = getMasterSession();
+  if (!session) return;
+  const res = await apiCall('getMasterData', { masterToken: session.masterToken || session.token });
+  return res;
+}
+
+async function loadAllCompanies() {
+  const session = getMasterSession();
+  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  const res = await apiCall('getMasterData', { masterToken: session.masterToken || session.token });
+  return res;
+}
+
+async function updateCompanyLicense(companyId, plan, fechaVencimiento, estado) {
+  const session = getMasterSession();
+  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  const res = await apiCall('updateLicense', {
+    masterToken: session.masterToken || session.token,
+    companyId,
+    plan,
+    fechaVencimiento,
+    estado
+  });
+  if (res.status === 'SUCCESS') showToast('Licencia actualizada correctamente.', 'success');
+  else showToast(res.message || 'Error al actualizar licencia.', 'error');
+  return res;
+}
+
+async function saveMasterGeminiKey(apiKey) {
+  const session = getMasterSession();
+  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  const res = await apiCall('saveGeminiKey', {
+    masterToken: session.masterToken || session.token,
+    apiKey
+  });
+  if (res.status === 'SUCCESS') showToast('API Key de Gemini guardada.', 'success');
+  else showToast(res.message || 'Error al guardar API Key.', 'error');
+  return res;
+}
+
+// Exports Master
+window.loginMaster = loginMaster;
+window.getMasterSession = getMasterSession;
+window.logoutMaster = logoutMaster;
+window.loadMasterMetrics = loadMasterMetrics;
+window.loadAllCompanies = loadAllCompanies;
+window.updateCompanyLicense = updateCompanyLicense;
+window.saveMasterGeminiKey = saveMasterGeminiKey;

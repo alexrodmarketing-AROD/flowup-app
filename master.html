@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO Bloqueado intencionalmente: este panel no debe indexarse -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>FLOWUP CRM — Control Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .glass-dark { background: rgba(15,23,42,0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.06); }
+    .row-hover:hover { background: rgba(16,185,129,0.05); }
+    .status-active  { background:#D1FAE5; color:#065F46; border:1px solid #6EE7B7; }
+    .status-suspended { background:#FEE2E2; color:#991B1B; border:1px solid #FCA5A5; }
+    .status-demo    { background:#FEF3C7; color:#92400E; border:1px solid #FCD34D; }
+    .sidebar-btn { @apply w-full text-left px-4 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2.5; }
+    .sidebar-btn:hover { background: rgba(16,185,129,0.15); color: #10B981; }
+    .sidebar-btn.active { background: rgba(16,185,129,0.2); color: #10B981; }
+    /* Edit modal overlay */
+    .modal-bg { background: rgba(2,6,23,0.75); backdrop-filter: blur(4px); }
+    /* Scrollbar estilo dark */
+    ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:#0F172A; }
+    ::-webkit-scrollbar-thumb { background:#334155; border-radius:3px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!--  LOGIN SCREEN  -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div id="screen-login" class="flex-1 flex items-center justify-center p-4 min-h-screen fade-in">
+    <!-- Animated gradient background -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="glass-dark rounded-2xl p-8 w-full max-w-sm relative z-10 shadow-2xl">
+      <!-- Logo -->
+      <div class="flex items-center justify-center gap-3 mb-8">
+        <div class="w-11 h-11 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg shadow-emerald-900/50">F</div>
+        <div>
+          <span class="block text-lg font-black tracking-tight text-white leading-none">FLOWUP <span class="text-emerald-400">CRM</span></span>
+          <span class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Control Center · SuperAdmin</span>
+        </div>
+      </div>
+
+      <h1 class="text-xl font-black text-white text-center mb-1">Acceso Restringido</h1>
+      <p class="text-xs text-slate-500 text-center mb-7 font-medium">Solo personal autorizado del sistema</p>
+
+      <form id="form-master-login" onsubmit="handleMasterLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Master</label>
+          <input type="email" id="master-email" required autocomplete="off"
+            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-sm font-semibold text-white placeholder-slate-600
+                   focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
+            placeholder="superadmin@flowupcrm.com">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contraseña Master</label>
+          <input type="password" id="master-password" required autocomplete="off"
+            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-sm font-semibold text-white placeholder-slate-600
+                   focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
+            placeholder="••••••••••">
+        </div>
+        <button type="submit" id="btn-master-login"
+          class="w-full mt-2 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm rounded-xl
+                 shadow-lg shadow-emerald-900/40 transition transform hover:-translate-y-0.5 active:translate-y-0">
+          Ingresar al Control Center
+        </button>
+      </form>
+
+      <p id="login-error-msg" class="hidden mt-4 text-center text-xs font-bold text-red-400 bg-red-900/20 border border-red-800/40 rounded-lg py-2.5 px-3"></p>
+
+      <p class="text-center text-[10px] text-slate-700 mt-6 font-semibold">
+        Acceso no autorizado constituye una violación de los TOS de FLOWUP CRM.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!--  MASTER DASHBOARD (oculto hasta autenticación)                  -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div id="screen-dashboard" class="hidden flex-1 flex flex-col min-h-screen fade-in">
+
+    <!-- Top Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex justify-between items-center sticky top-0 z-50 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-lg flex items-center justify-center font-black text-white shadow-md">F</div>
+        <div>
+          <span class="text-base font-black tracking-tight text-white leading-none">FLOWUP <span class="text-emerald-400">Control Center</span></span>
+          <span class="block text-[9px] font-bold text-slate-600 uppercase tracking-widest">SuperAdmin Panel · v131</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="master-user-display" class="text-xs font-bold text-slate-400">master@flowup.com</span>
+        </div>
+        <button onclick="logoutMaster()"
+          class="text-xs font-bold text-slate-500 hover:text-red-400 px-3 py-1.5 border border-slate-700 hover:border-red-800/60 rounded-lg transition">
+          ✕ Cerrar Sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="w-56 bg-slate-900 border-r border-slate-800 p-3 flex flex-col gap-1 pt-5 flex-shrink-0">
+        <div class="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-3 mb-2">Módulos</div>
+        <button onclick="switchTab('tab-metrics')" id="nav-tab-metrics"
+          class="sidebar-btn active" aria-current="page">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Métricas Globales
+        </button>
+        <button onclick="switchTab('tab-companies')" id="nav-tab-companies" class="sidebar-btn">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          Empresas & Licencias
+        </button>
+        <button onclick="switchTab('tab-config')" id="nav-tab-config" class="sidebar-btn">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Configuración
+        </button>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+        <!-- ── TAB: MÉTRICAS GLOBALES ───────────────────────────────────── -->
+        <div id="tab-metrics" class="space-y-6 fade-in">
+          <div>
+            <h2 class="text-xl font-black text-white">Métricas Globales del Sistema</h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Visión general de todas las empresas registradas en FLOWUP CRM</p>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Total Empresas</p>
+              <p id="kpi-total-empresas" class="text-3xl font-black text-white">—</p>
+              <p class="text-[10px] text-slate-600 mt-1">registradas en MASTER_EMPRESAS</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-wider mb-2">Licencias Activas</p>
+              <p id="kpi-activas" class="text-3xl font-black text-emerald-400">—</p>
+              <p class="text-[10px] text-slate-600 mt-1">cuentas en producción</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <p class="text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-2">En Demo</p>
+              <p id="kpi-demo" class="text-3xl font-black text-amber-400">—</p>
+              <p class="text-[10px] text-slate-600 mt-1">período de prueba activo</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <p class="text-[11px] font-bold text-red-500 uppercase tracking-wider mb-2">Suspendidas</p>
+              <p id="kpi-suspendidas" class="text-3xl font-black text-red-400">—</p>
+              <p class="text-[10px] text-slate-600 mt-1">requieren gestión</p>
+            </div>
+          </div>
+
+          <div id="metrics-loading" class="text-center py-10 text-slate-600 font-semibold text-sm">
+            <svg class="w-5 h-5 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+            Cargando datos del sistema...
+          </div>
+        </div>
+
+        <!-- ── TAB: EMPRESAS & LICENCIAS ───────────────────────────────── -->
+        <div id="tab-companies" class="hidden space-y-6 fade-in">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-black text-white">Empresas & Licencias</h2>
+              <p class="text-xs text-slate-500 font-medium mt-0.5">Gestión completa de MASTER_EMPRESAS — activación, suspensión y configuración de planes</p>
+            </div>
+            <button onclick="reloadCompanies()"
+              class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold rounded-xl transition flex items-center gap-2">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Recargar
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-slate-800 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                    <th class="px-4 py-3 text-left">Empresa</th>
+                    <th class="px-4 py-3 text-left">Email Admin</th>
+                    <th class="px-4 py-3 text-left">Plan</th>
+                    <th class="px-4 py-3 text-left">Estado</th>
+                    <th class="px-4 py-3 text-left">Vence</th>
+                    <th class="px-4 py-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="companies-table-body">
+                  <tr>
+                    <td colspan="6" class="text-center py-10 text-slate-600 font-semibold">
+                      <svg class="w-5 h-5 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                      Cargando empresas...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── TAB: CONFIGURACIÓN ───────────────────────────────────────── -->
+        <div id="tab-config" class="hidden space-y-6 fade-in">
+          <div>
+            <h2 class="text-xl font-black text-white">Configuración del Sistema</h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Parámetros globales de FLOWUP CRM</p>
+          </div>
+
+          <!-- Gemini API Key -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <h3 class="text-sm font-black text-white mb-1">API Key de Google Gemini</h3>
+            <p class="text-xs text-slate-500 font-medium mb-4">Llave global para el motor de Copiloto IA. Se guarda cifrada en el backend.</p>
+            <form onsubmit="handleSaveGeminiKey(event)" class="flex gap-3">
+              <input type="text" id="gemini-api-key" required
+                class="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-mono text-emerald-400
+                       focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
+                placeholder="AIzaSy...">
+              <button type="submit" id="btn-save-gemini"
+                class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition shadow-md">
+                Guardar
+              </button>
+            </form>
+          </div>
+
+          <!-- Info del Servidor -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <h3 class="text-sm font-black text-white mb-4">Información del Sistema</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold">
+              <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                <p class="text-slate-500 uppercase tracking-wider text-[10px] font-bold mb-1">Backend</p>
+                <p class="text-slate-200">Google Apps Script (GAS)</p>
+                <p class="text-slate-500 mt-1 font-mono text-[10px] break-all">AKfycbwZOehQFikNBx...</p>
+              </div>
+              <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                <p class="text-slate-500 uppercase tracking-wider text-[10px] font-bold mb-1">Frontend</p>
+                <p class="text-slate-200">GitHub Pages (Static)</p>
+                <p class="text-slate-500 mt-1 font-mono text-[10px]">alexrodmarketing-arod.github.io</p>
+              </div>
+              <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                <p class="text-slate-500 uppercase tracking-wider text-[10px] font-bold mb-1">Versión</p>
+                <p class="text-emerald-400 font-black">v131</p>
+              </div>
+              <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                <p class="text-slate-500 uppercase tracking-wider text-[10px] font-bold mb-1">Sesión Master</p>
+                <p id="config-master-email" class="text-slate-200">—</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ── MODAL EDITAR LICENCIA ──────────────────────────────────────────── -->
+  <div id="modal-edit-license" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="text-lg font-black text-white">Gestionar Licencia</h3>
+        <button onclick="closeLicenseModal()" class="text-slate-500 hover:text-slate-300 font-bold">✕</button>
+      </div>
+      <form id="form-edit-license" onsubmit="submitLicense(event)" class="space-y-4">
+        <input type="hidden" id="lic-company-id">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Empresa</label>
+          <input type="text" id="lic-company-name" readonly
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-400">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Plan</label>
+            <select id="lic-plan"
+              class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-bold text-white
+                     focus:outline-none focus:border-emerald-500 transition">
+              <option value="DEMO">DEMO</option>
+              <option value="STARTER">STARTER</option>
+              <option value="PRO">PRO</option>
+              <option value="ENTERPRISE">ENTERPRISE</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Estado</label>
+            <select id="lic-estado"
+              class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-bold text-white
+                     focus:outline-none focus:border-emerald-500 transition">
+              <option value="ACTIVO">ACTIVO</option>
+              <option value="DEMO">DEMO</option>
+              <option value="SUSPENDIDO">SUSPENDIDO</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Fecha Vencimiento (YYYY-MM-DD)</label>
+          <input type="date" id="lic-vencimiento"
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white
+                   focus:outline-none focus:border-emerald-500 transition">
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="closeLicenseModal()"
+            class="flex-1 py-2.5 border border-slate-700 text-slate-400 rounded-xl text-sm font-bold hover:bg-slate-800 transition">
+            Cancelar
+          </button>
+          <button type="submit" id="btn-submit-license"
+            class="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md transition">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── TOAST ─────────────────────────────────────────────────────────────── -->
+  <div id="custom-toast" class="hidden">
+    <div class="flex items-center gap-3">
+      <div id="custom-toast-icon-container"></div>
+      <p id="custom-toast-msg" class="text-sm font-bold"></p>
+    </div>
+  </div>
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────────────────────── -->
+  <script src="./js/app.js"></script>
+  <script>
+    // ── Tab Navigation ────────────────────────────────────────────────────────
+    const TABS = ['tab-metrics', 'tab-companies', 'tab-config'];
+
+    function switchTab(tabId) {
+      TABS.forEach(id => {
+        const el  = document.getElementById(id);
+        const nav = document.getElementById('nav-' + id);
+        if (el) el.classList.add('hidden');
+        if (nav) nav.classList.remove('active');
+      });
+      const target = document.getElementById(tabId);
+      const navBtn = document.getElementById('nav-' + tabId);
+      if (target) { target.classList.remove('hidden'); target.classList.add('fade-in'); }
+      if (navBtn) navBtn.classList.add('active');
+
+      if (tabId === 'tab-companies') reloadCompanies();
+    }
+
+    // ── Login Handler ─────────────────────────────────────────────────────────
+    async function handleMasterLogin(e) {
+      e.preventDefault();
+      const email    = document.getElementById('master-email').value.trim();
+      const password = document.getElementById('master-password').value;
+      const btn      = document.getElementById('btn-master-login');
+      const errEl    = document.getElementById('login-error-msg');
+
+      btn.disabled   = true;
+      btn.textContent = 'Verificando...';
+      errEl.classList.add('hidden');
+
+      const result = await loginMaster(email, password);
+
+      btn.disabled   = false;
+      btn.textContent = 'Ingresar al Control Center';
+
+      if (result.ok) {
+        document.getElementById('screen-login').classList.add('hidden');
+        document.getElementById('screen-dashboard').classList.remove('hidden');
+        document.getElementById('screen-dashboard').classList.add('flex');
+        initDashboard(result.data);
+      } else {
+        errEl.textContent = 'Acceso denegado. Credenciales incorrectas o no autorizadas.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    // ── Init Dashboard after Login ────────────────────────────────────────────
+    async function initDashboard(userData) {
+      const email = userData.email || userData.masterEmail || '—';
+      document.getElementById('master-user-display').textContent = email;
+      document.getElementById('config-master-email').textContent = email;
+      await loadMetrics();
+    }
+
+    // ── Load Global Metrics ───────────────────────────────────────────────────
+    async function loadMetrics() {
+      const res = await loadMasterMetrics();
+      const loadEl = document.getElementById('metrics-loading');
+
+      if (res && res.status === 'SUCCESS' && res.data) {
+        const companies = Array.isArray(res.data) ? res.data
+          : (Array.isArray(res.data.empresas) ? res.data.empresas : []);
+
+        const total      = companies.length;
+        const activas    = companies.filter(c => (c.estado_cuenta || c[5] || '').toUpperCase() === 'ACTIVO').length;
+        const demo       = companies.filter(c => (c.estado_cuenta || c[5] || '').toUpperCase() === 'DEMO').length;
+        const suspendidas= companies.filter(c => (c.estado_cuenta || c[5] || '').toUpperCase() === 'SUSPENDIDO').length;
+
+        document.getElementById('kpi-total-empresas').textContent = total;
+        document.getElementById('kpi-activas').textContent = activas;
+        document.getElementById('kpi-demo').textContent = demo;
+        document.getElementById('kpi-suspendidas').textContent = suspendidas;
+        if (loadEl) loadEl.classList.add('hidden');
+      } else {
+        if (loadEl) loadEl.textContent = res?.message || 'Error al cargar métricas.';
+      }
+    }
+
+    // ── Load Companies Table ─────────────────────────────────────────────────
+    async function reloadCompanies() {
+      const tbody = document.getElementById('companies-table-body');
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-600 font-semibold">
+        <svg class="w-5 h-5 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+        Cargando...</td></tr>`;
+
+      const res = await loadAllCompanies();
+      if (!res || res.status !== 'SUCCESS') {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500 font-semibold">${res?.message || 'Error al cargar empresas.'}</td></tr>`;
+        return;
+      }
+
+      const companies = Array.isArray(res.data) ? res.data
+        : (Array.isArray(res.data.empresas) ? res.data.empresas : []);
+
+      if (companies.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-600 font-semibold">No hay empresas registradas.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = companies.map((c, i) => {
+        const id      = c.id_empresa      || c[0] || '—';
+        const nombre  = c.nombre_comercial|| c[1] || '—';
+        const email   = c.email_admin     || c[2] || '—';
+        const plan    = c.plan_suscripcion|| c[3] || 'DEMO';
+        const estado  = (c.estado_cuenta  || c[5] || 'DEMO').toUpperCase();
+        const vence   = c.fecha_vencimiento || c[11] || '—';
+
+        const statusClass = estado === 'ACTIVO' ? 'status-active'
+          : estado === 'SUSPENDIDO' ? 'status-suspended' : 'status-demo';
+
+        const planColors = {
+          DEMO: 'text-amber-400', STARTER: 'text-blue-400',
+          PRO: 'text-emerald-400', ENTERPRISE: 'text-purple-400'
+        };
+
+        return `
+          <tr class="border-b border-slate-800 row-hover transition-colors" data-row="${i}">
+            <td class="px-4 py-3">
+              <p class="font-bold text-white text-sm">${nombre}</p>
+              <p class="text-[11px] text-slate-600 font-mono">${id}</p>
+            </td>
+            <td class="px-4 py-3 text-xs text-slate-400 font-semibold">${email}</td>
+            <td class="px-4 py-3">
+              <span class="text-xs font-extrabold ${planColors[plan] || 'text-slate-400'}">${plan}</span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold ${statusClass}">${estado}</span>
+            </td>
+            <td class="px-4 py-3 text-xs text-slate-500 font-semibold">${vence}</td>
+            <td class="px-4 py-3 text-right">
+              <button onclick="openLicenseModal('${id}','${nombre}','${plan}','${estado}','${vence}')"
+                class="text-xs font-bold text-emerald-500 hover:text-emerald-300 border border-emerald-900/50 hover:border-emerald-600/60 px-3 py-1.5 rounded-lg transition">
+                Gestionar
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // ── License Modal ────────────────────────────────────────────────────────
+    function openLicenseModal(id, nombre, plan, estado, vence) {
+      document.getElementById('lic-company-id').value    = id;
+      document.getElementById('lic-company-name').value  = nombre;
+      document.getElementById('lic-plan').value          = plan;
+      document.getElementById('lic-estado').value        = estado;
+      document.getElementById('lic-vencimiento').value   = vence !== '—' ? vence : '';
+      document.getElementById('modal-edit-license').classList.remove('hidden');
+    }
+
+    function closeLicenseModal() {
+      document.getElementById('modal-edit-license').classList.add('hidden');
+    }
+
+    async function submitLicense(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-license');
+      btn.disabled = true; btn.textContent = 'Guardando...';
+
+      const companyId        = document.getElementById('lic-company-id').value;
+      const plan             = document.getElementById('lic-plan').value;
+      const estado           = document.getElementById('lic-estado').value;
+      const fechaVencimiento = document.getElementById('lic-vencimiento').value;
+
+      await updateCompanyLicense(companyId, plan, fechaVencimiento, estado);
+
+      btn.disabled = false; btn.textContent = 'Guardar Cambios';
+      closeLicenseModal();
+      reloadCompanies();
+    }
+
+    // ── Gemini Key Save ───────────────────────────────────────────────────────
+    async function handleSaveGeminiKey(e) {
+      e.preventDefault();
+      const apiKey = document.getElementById('gemini-api-key').value.trim();
+      const btn    = document.getElementById('btn-save-gemini');
+      btn.disabled = true; btn.textContent = 'Guardando...';
+      await saveMasterGeminiKey(apiKey);
+      btn.disabled = false; btn.textContent = 'Guardar';
+      document.getElementById('gemini-api-key').value = '';
+    }
+
+    // ── Auto-restore session on load ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = getMasterSession();
+      if (session) {
+        document.getElementById('screen-login').classList.add('hidden');
+        document.getElementById('screen-dashboard').classList.remove('hidden');
+        document.getElementById('screen-dashboard').classList.add('flex');
+        initDashboard(session);
+      }
+    });
+  </script>
+</body>
+</html>
