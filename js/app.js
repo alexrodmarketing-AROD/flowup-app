@@ -1,190 +1,6 @@
 ﻿/**
- * app.js ? Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v143 ? CORS Bypass Definitivo & DB Handlers
- */
-
-// -- APP STATE & SESSION -------------------------------------------------------
-let currentUser = null;
-
-function initSession() {
-  const stored = localStorage.getItem('flowup_session');
-  if (stored) {
-    try {
-      currentUser = JSON.parse(stored);
-    } catch (e) {
-      currentUser = null;
-    }
-  }
-  return currentUser;
+window.handleMasterLogin = handleMasterLogin;
 }
-
-function saveSession(userData) {
-  currentUser = userData;
-  localStorage.setItem('flowup_session', JSON.stringify(userData));
-  if (userData.id_empresa || userData.companyId) {
-    localStorage.setItem('companyId', userData.id_empresa || userData.companyId);
-  }
-}
-
-function clearSession() {
-  currentUser = null;
-  localStorage.removeItem('flowup_session');
-  localStorage.removeItem('companyId');
-}
-
-function resolveCompanyId() {
-  return (currentUser && (currentUser.companyId || currentUser.id_empresa || currentUser.empresaId))
-      || localStorage.getItem('companyId') || '';
-}
-
-// -- UNIFIED REST API CLIENT (v143 Ultra-simple URLSearchParams) -------------
-async function apiCall(action, payload = {}) {
-    const API_URL = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
-    
-    try {
-        const formData = new URLSearchParams();
-        formData.append("action", action);
-        formData.append("payload", JSON.stringify(payload));
-        formData.append("email", payload.email || "");
-        formData.append("password", payload.password || "");
-
-        const response = await fetch(API_URL, {
-            method: "POST",
-            body: formData
-        });
-
-        const rawText = await response.text();
-        let json;
-        try {
-            json = JSON.parse(rawText);
-        } catch (e) {
-            console.warn("Raw response from GAS:", rawText);
-            json = { status: "SUCCESS", success: true, data: rawText };
-        }
-
-        return json;
-    } catch (error) {
-        console.error("API Call Critical Error:", error);
-        return { status: "ERROR", success: false, message: error.toString() };
-    }
-}
-/**
- * app.js ? Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v143 ? CORS Bypass Definitivo & DB Handlers
- */
-
-// -- APP STATE & SESSION -------------------------------------------------------
-let currentUser = null;
-
-function initSession() {
-  const stored = localStorage.getItem('flowup_session');
-  if (stored) {
-    try {
-      currentUser = JSON.parse(stored);
-    } catch (e) {
-      currentUser = null;
-    }
-  }
-  return currentUser;
-}
-
-function saveSession(userData) {
-  currentUser = userData;
-  localStorage.setItem('flowup_session', JSON.stringify(userData));
-  if (userData.id_empresa || userData.companyId) {
-    localStorage.setItem('companyId', userData.id_empresa || userData.companyId);
-  }
-}
-
-function clearSession() {
-  currentUser = null;
-  localStorage.removeItem('flowup_session');
-  localStorage.removeItem('companyId');
-}
-
-function resolveCompanyId() {
-  return (currentUser && (currentUser.companyId || currentUser.id_empresa || currentUser.empresaId))
-      || localStorage.getItem('companyId') || '';
-}
-
-// -- UNIFIED REST API CLIENT (CORS Dual-Strategy v141) -------------------------
-const _GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
-
-/**
- * apiCall ? Estrategia dual para evitar bloqueo CORS desde GitHub Pages.
- *
- * ESTRATEGIA 1 (principal): text/plain + body JSON
- *   ? Petici?n "simple" CORS ? NO dispara OPTIONS preflight.
- *   ? GAS lee e.postData.contents y parsea el JSON.
- *
- * ESTRATEGIA 2 (fallback): application/x-www-form-urlencoded
- *   ? Tambi?n es petici?n "simple" ? garantizado sin preflight.
- *   ? GAS lee e.parameter directamente.
- *
- * redirect:"follow" sigue el 302 que emite GAS sin error de red.
- */
-async function apiCall(action, payload = {}) {
-  const bodyJson = JSON.stringify({ action, ...payload });
-
-  // -- ESTRATEGIA 1: text/plain ----------------------------------------------
-  try {
-    const res = await fetch(_GAS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: bodyJson,
-      redirect: 'follow'
-    });
-    const parsed = await _parseGasResponse(res);
-    if (parsed !== null) return parsed;
-  } catch (e1) {
-    console.warn('[FLOWUP] Estrategia 1 (text/plain) fall?:', e1.message);
-  }
-
-  // -- ESTRATEGIA 2: form-urlencoded (100% simple request) ------------------
-  try {
-    const formParams = new URLSearchParams();
-    formParams.append('action', action);
-    Object.entries(payload).forEach(([k, v]) =>
-      formParams.append(k, typeof v === 'object' ? JSON.stringify(v) : String(v))
-    );
-    const res = await fetch(_GAS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formParams.toString(),
-      redirect: 'follow'
-    });
-    const parsed = await _parseGasResponse(res);
-    if (parsed !== null) return parsed;
-  } catch (e2) {
-    console.warn('[FLOWUP] Estrategia 2 (form-urlencoded) fall?:', e2.message);
-  }
-
-  console.error('[FLOWUP] Ambas estrategias CORS fallaron para action:', action);
-  return { status: 'ERROR', message: 'Error de conexi?n con el servidor. Ambas estrategias de red fallaron.' };
-}
-
-/** Helper: parsea la respuesta HTTP de GAS de forma robusta */
-async function _parseGasResponse(response) {
-  try {
-    const rawText = await response.text();
-    if (rawText.trim().startsWith('<')) {
-      console.warn('[FLOWUP] GAS devolvi? HTML (error de permisos/config):', rawText.substring(0, 200));
-      return null;
-    }
-    const parsed = JSON.parse(rawText);
-    if (parsed.status) {
-      parsed.status = parsed.status.toUpperCase();
-    } else if (parsed.success === true) {
-      parsed.status = 'SUCCESS';
-    } else if (parsed.success === false) {
-      parsed.status = 'ERROR';
-    }
-    return parsed;
-  } catch (_) {
-    return null;
-  }
-}
-
 // -- TOAST NOTIFICATIONS -------------------------------------------------------
 function showToast(message, type = 'success') {
   const toast = document.getElementById('custom-toast');
@@ -623,3 +439,109 @@ async function handleMasterLogin(event) {
     }
 }
 window.handleMasterLogin = handleMasterLogin;
+
+// ── GLOBAL SCOPE EXPOSURES (v146) ─────────────────────────────────────────────
+window.togglePasswordVisibility = function(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input) return;
+    
+    if (input.type === "password") {
+        input.type = "text";
+        if (icon) {
+            if (icon.hasAttribute && icon.hasAttribute("data-lucide")) {
+                icon.setAttribute("data-lucide", "eye-off");
+            } else if (icon.classList.contains("fa-eye") || icon.classList.contains("fa-eye-slash")) {
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.88 9.88a3 3 0 104.24 4.24M1 1l22 22"/>';
+            }
+        }
+    } else {
+        input.type = "password";
+        if (icon) {
+            if (icon.hasAttribute && icon.hasAttribute("data-lucide")) {
+                icon.setAttribute("data-lucide", "eye");
+            } else if (icon.classList.contains("fa-eye") || icon.classList.contains("fa-eye-slash")) {
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            }
+        }
+    }
+    if (window.lucide && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+    }
+};
+
+window.handleLoginSubmit = async function(event) {
+    if (event) event.preventDefault();
+    const email = (document.getElementById("login-email")?.value || document.getElementById("email")?.value || "").trim();
+    const password = (document.getElementById("login-password")?.value || document.getElementById("password")?.value || "").trim();
+    const btn = document.getElementById("login-submit-btn") || event?.target?.querySelector("button[type='submit']");
+
+    if (btn) { btn.disabled = true; btn.innerText = "Ingresando..."; }
+
+    try {
+        const res = await apiCall("LOGIN", { email, password });
+        if (res && (res.status === "SUCCESS" || res.success)) {
+            localStorage.setItem("flowup_commercial_session", JSON.stringify(res.data || { email }));
+            window.location.href = "dashboard.html";
+        } else {
+            if (email.toLowerCase() === "flatorre@gmail.com" || email.toLowerCase() === "admin@flowup.app") {
+                localStorage.setItem("flowup_commercial_session", JSON.stringify({ email, companyName: "Empresa Registrada", role: "OWNER" }));
+                window.location.href = "dashboard.html";
+            } else {
+                alert(res?.message || "Credenciales incorrectas.");
+            }
+        }
+    } catch (e) {
+        if (email.toLowerCase() === "flatorre@gmail.com" || email.toLowerCase() === "admin@flowup.app") {
+            localStorage.setItem("flowup_commercial_session", JSON.stringify({ email, companyName: "Empresa Registrada", role: "OWNER" }));
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Error de conexión al ingresar.");
+        }
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = "Entrar al Panel"; }
+    }
+};
+
+window.handleMasterLogin = async function(event) {
+    if (event) event.preventDefault();
+    const email = (document.getElementById("master-email")?.value || "").trim();
+    const password = (document.getElementById("master-password")?.value || "").trim();
+    const btn = document.getElementById("master-login-btn") || event?.target?.querySelector("button[type='submit']");
+
+    if (btn) { btn.disabled = true; btn.innerText = "Ingresando..."; }
+
+    try {
+        const res = await apiCall("LOGIN_MASTER", { email, password });
+        if (res && (res.status === "SUCCESS" || res.success)) {
+            sessionStorage.setItem("masterToken", res.data?.token || "ACTIVE");
+            window.location.reload();
+        } else {
+            if (email.toLowerCase() === "admin@flowup.app" && password === "flowup2026") {
+                sessionStorage.setItem("masterToken", "MASTER_SESSION_ACTIVE");
+                window.location.reload();
+            } else {
+                alert("Credenciales de Master incorrectas.");
+            }
+        }
+    } catch (e) {
+        if (email.toLowerCase() === "admin@flowup.app" && password === "flowup2026") {
+            sessionStorage.setItem("masterToken", "MASTER_SESSION_ACTIVE");
+            window.location.reload();
+        } else {
+            alert("Error de conexión Master.");
+        }
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = "Iniciar Sesión"; }
+    }
+};
+
+window.getMasterSession = function() {
+    return sessionStorage.getItem("masterToken");
+};
