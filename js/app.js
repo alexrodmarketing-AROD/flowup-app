@@ -1,6 +1,6 @@
 /**
  * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v136 — CORS Fix, Master Panel & Commercial Login
+ * FLOWUP CRM v137 — Vinculación explícita a BD por ID (openById fix)
  */
 
 // ── APP STATE & SESSION ───────────────────────────────────────────────────────
@@ -400,8 +400,8 @@ async function loginMaster(email, password) {
       success: true,
       role: 'SUPERADMIN',
       user: { email: 'admin@flowup.app', name: 'Super Admin (Offline)' },
-      token: 'MASTER_SESSION_ACTIVE_136',
-      masterToken: 'MASTER_SESSION_ACTIVE_136',
+      token: 'MASTER_SESSION_ACTIVE_137',
+      masterToken: 'MASTER_SESSION_ACTIVE_137',
       email: 'admin@flowup.app',
       rol: 'SUPERADMIN'
     };
