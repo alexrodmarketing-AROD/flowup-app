@@ -1,6 +1,6 @@
-/**
+﻿/**
  * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v138 — Vinculación explícita a BD por ID (openById fix)
+ * FLOWUP CRM v140 — CORS Bypass Definitivo & DB Handlers
  */
 
 // ── APP STATE & SESSION ───────────────────────────────────────────────────────
@@ -37,33 +37,71 @@ function resolveCompanyId() {
       || localStorage.getItem('companyId') || '';
 }
 
-// ── UNIFIED REST API CLIENT ───────────────────────────────────────────────────
+// ── UNIFIED REST API CLIENT (CORS Dual-Strategy v140) ─────────────────────────
 const _GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
 
+/**
+ * apiCall — Estrategia dual para evitar bloqueo CORS desde GitHub Pages.
+ *
+ * ESTRATEGIA 1 (principal): text/plain + body JSON
+ *   → Petición "simple" CORS — NO dispara OPTIONS preflight.
+ *   → GAS lee e.postData.contents y parsea el JSON.
+ *
+ * ESTRATEGIA 2 (fallback): application/x-www-form-urlencoded
+ *   → También es petición "simple" — garantizado sin preflight.
+ *   → GAS lee e.parameter directamente.
+ *
+ * redirect:"follow" sigue el 302 que emite GAS sin error de red.
+ */
 async function apiCall(action, payload = {}) {
-  // Google Apps Script requiere:
-  //  - Content-Type: text/plain;charset=utf-8  → evita preflight OPTIONS (CORS bypass)
-  //  - redirect: "follow"                      → sigue la redirección 302 de GAS sin bloquear
+  const bodyJson = JSON.stringify({ action, ...payload });
+
+  // ── ESTRATEGIA 1: text/plain ──────────────────────────────────────────────
   try {
-    const response = await fetch(_GAS_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, ...payload }),
-      redirect: "follow"
+    const res = await fetch(_GAS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: bodyJson,
+      redirect: 'follow'
     });
+    const parsed = await _parseGasResponse(res);
+    if (parsed !== null) return parsed;
+  } catch (e1) {
+    console.warn('[FLOWUP] Estrategia 1 (text/plain) falló:', e1.message);
+  }
 
-    // Leer el cuerpo como texto primero para capturar errores HTML de GAS
+  // ── ESTRATEGIA 2: form-urlencoded (100% simple request) ──────────────────
+  try {
+    const formParams = new URLSearchParams();
+    formParams.append('action', action);
+    Object.entries(payload).forEach(([k, v]) =>
+      formParams.append(k, typeof v === 'object' ? JSON.stringify(v) : String(v))
+    );
+    const res = await fetch(_GAS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formParams.toString(),
+      redirect: 'follow'
+    });
+    const parsed = await _parseGasResponse(res);
+    if (parsed !== null) return parsed;
+  } catch (e2) {
+    console.warn('[FLOWUP] Estrategia 2 (form-urlencoded) falló:', e2.message);
+  }
+
+  console.error('[FLOWUP] Ambas estrategias CORS fallaron para action:', action);
+  return { status: 'ERROR', message: 'Error de conexión con el servidor. Ambas estrategias de red fallaron.' };
+}
+
+/** Helper: parsea la respuesta HTTP de GAS de forma robusta */
+async function _parseGasResponse(response) {
+  try {
     const rawText = await response.text();
-    let parsed;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch (_) {
-      // GAS devolvió HTML (error de permisos, redirect no seguido, etc.)
-      console.warn('[FLOWUP API] Respuesta no-JSON recibida:', rawText.substring(0, 200));
-      return { status: 'ERROR', message: 'El servidor devolvió una respuesta inesperada (no-JSON). Verifique los permisos de la Web App.' };
+    if (rawText.trim().startsWith('<')) {
+      console.warn('[FLOWUP] GAS devolvió HTML (error de permisos/config):', rawText.substring(0, 200));
+      return null;
     }
-
-    // Normalizar: el backend puede devolver status en mayúsculas o minúsculas
+    const parsed = JSON.parse(rawText);
     if (parsed.status) {
       parsed.status = parsed.status.toUpperCase();
     } else if (parsed.success === true) {
@@ -71,11 +109,9 @@ async function apiCall(action, payload = {}) {
     } else if (parsed.success === false) {
       parsed.status = 'ERROR';
     }
-
     return parsed;
-  } catch (err) {
-    console.error('[FLOWUP API ERROR]', err);
-    return { status: 'ERROR', message: err.message || 'Error de conexión con el servidor. Verifique su conexión a internet.' };
+  } catch (_) {
+    return null;
   }
 }
 
