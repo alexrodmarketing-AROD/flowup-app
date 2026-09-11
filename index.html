@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLOWUP CRM - El Copiloto de Ventas para WhatsApp Web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased selection:bg-[#10B981] selection:text-white min-h-screen flex flex-col">
+
+  <!-- LANDING PAGE VIEW -->
+  <div id="view-landing" class="flex-1 overflow-y-auto fade-in">
+    <!-- Banner Superior de Garantía y Seguridad -->
+    <div class="bg-slate-900 text-slate-300 text-[11px] font-semibold py-2 px-4 text-center flex justify-center items-center gap-4 border-b border-slate-800">
+      <span class="flex items-center gap-1.5 text-emerald-400">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H5V7a3 3 0 016 0v2h2V7a5 5 0 00-5-5z"/></svg>
+        Sin Riesgo de Suspensión por Meta
+      </span>
+      <span class="hidden md:inline text-slate-600">|</span>
+      <span class="hidden md:inline">No requiere vincular QR ni APIs de terceros</span>
+      <span class="text-slate-600">|</span>
+      <span class="text-amber-400">Human Touch: Tu vendedor siempre decide y envía</span>
+    </div>
+
+    <!-- Header Comercial Navbar -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200/80">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-[#10B981] rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-md shadow-[#10B981]/20">F</div>
+          <div>
+            <span class="text-xl font-black tracking-tight text-slate-900 leading-none block">FLOWUP <span class="text-[#10B981]">CRM</span></span>
+            <span class="text-[9px] font-bold text-slate-400 tracking-wider uppercase block">Asistente de Ventas In-Situ</span>
+          </div>
+        </div>
+        <nav class="hidden md:flex gap-8 text-sm font-bold text-slate-600">
+          <a href="#por-que-flowup" class="hover:text-[#10B981] transition">¿Por qué FLOWUP?</a>
+          <a href="#metodologia" class="hover:text-[#10B981] transition">Metodología</a>
+          <a href="#precios" class="hover:text-[#10B981] transition">Planes</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <button onclick="showLoginModal()" class="px-5 py-2.5 text-slate-700 hover:text-slate-900 text-sm font-bold transition">
+            Iniciar Sesión
+          </button>
+          <button onclick="showRegisterModal()" class="px-5 py-2.5 bg-[#F97316] hover:bg-[#EA580C] text-white text-sm font-bold rounded-xl shadow-lg shadow-[#F97316]/25 transition">
+            Probar DEMO Gratis
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section Persuasivo -->
+    <section class="max-w-7xl mx-auto px-6 pt-12 pb-16 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-800 text-xs font-bold mb-6 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+        Más que un CRM tradicional: La Mano Derecha de tu Equipo de Ventas
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+        No le dejes tus ventas a un Chatbot.<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-[#0EA5E9]">Convierte a tus vendedores en Asesores Expertos.</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-8 font-medium leading-relaxed">
+        Los chatbots autónomos cometen errores y hacen perder clientes sin que te enteres. FLOWUP es el <strong>Copiloto Comercial In-Situ</strong> que guía a tu vendedor en WhatsApp Web con técnicas y fórmulas de venta comprobadas en el mercado.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto mb-10 text-xs font-bold text-slate-700">
+        <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
+          <span class="text-emerald-500 font-black text-sm">✓</span> Asistencia de Redacción Persuasiva
+        </div>
+        <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
+          <span class="text-emerald-500 font-black text-sm">✓</span> Método de Cierre Estructurado
+        </div>
+        <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
+          <span class="text-emerald-500 font-black text-sm">✓</span> 0% Riesgo de Bloqueo por Meta
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-14">
+        <button onclick="showRegisterModal()" class="px-8 py-4 bg-[#F97316] hover:bg-[#EA580C] text-white font-extrabold text-base rounded-xl shadow-xl shadow-[#F97316]/30 transition transform hover:-translate-y-0.5">
+          🚀 Comenzar Demo Gratis (30 Leads)
+        </button>
+        <button onclick="showLoginModal()" class="px-8 py-4 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-extrabold text-base rounded-xl shadow-sm transition">
+          🔐 Acceso a mi Comercio
+        </button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-center text-xs">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+          <span class="font-bold text-white">FLOWUP CRM</span> &copy; 2026. Todos los derechos reservados.
+        </div>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-white">Términos de Servicio</a>
+          <a href="#" class="hover:text-white">Privacidad</a>
+          <a href="#" class="hover:text-white">Soporte</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- MODAL LOGIN -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative border border-slate-100">
+      <button onclick="hideLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 bg-[#10B981] rounded-2xl mx-auto flex items-center justify-center text-white font-black text-2xl mb-3 shadow-lg shadow-[#10B981]/30">F</div>
+        <h3 class="text-2xl font-black text-slate-900">Iniciar Sesión</h3>
+        <p class="text-xs text-slate-500 font-medium">Accede al Panel Administrativo de tu Comercio</p>
+      </div>
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email del Administrador o Vendedor</label>
+          <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition" placeholder="correo@comercio.com">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+          <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition" placeholder="••••••••">
+        </div>
+        <button type="submit" id="btn-login-submit" class="w-full py-3.5 bg-[#10B981] hover:bg-[#059669] text-white font-extrabold text-sm rounded-xl shadow-lg shadow-[#10B981]/25 transition">
+          Entrar al Panel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL REGISTER DEMO -->
+  <div id="register-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative border border-slate-100">
+      <button onclick="hideRegisterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 bg-[#F97316] rounded-2xl mx-auto flex items-center justify-center text-white font-black text-2xl mb-3 shadow-lg shadow-[#F97316]/30">🚀</div>
+        <h3 class="text-2xl font-black text-slate-900">Probar DEMO Gratis</h3>
+        <p class="text-xs text-slate-500 font-medium">Registra tu comercio e inicia en menos de 2 minutos</p>
+      </div>
+      <form onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre Comercial del Negocio</label>
+          <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition" placeholder="Ej. Tienda Deportiva Sol">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email del Administrador</label>
+          <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition" placeholder="admin@tienda.com">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Crear Contraseña</label>
+          <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition" placeholder="••••••••">
+        </div>
+        <button type="submit" id="btn-register-submit" class="w-full py-3.5 bg-[#F97316] hover:bg-[#EA580C] text-white font-extrabold text-sm rounded-xl shadow-lg shadow-[#F97316]/25 transition">
+          Crear mi Comercio Demo
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="custom-toast" class="hidden">
+    <div class="flex items-center gap-3">
+      <div id="custom-toast-icon-container"></div>
+      <p id="custom-toast-msg" class="text-sm font-bold"></p>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+  <script>
+    function showLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+    function hideLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+    function showRegisterModal() { document.getElementById('register-modal').classList.remove('hidden'); }
+    function hideRegisterModal() { document.getElementById('register-modal').classList.add('hidden'); }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      const btn = document.getElementById('btn-login-submit');
+      btn.disabled = true; btn.innerText = 'Verificando...';
+      await loginUser(email, pass);
+      btn.disabled = false; btn.innerText = 'Entrar al Panel';
+    }
+
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const pass = document.getElementById('reg-password').value;
+      const btn = document.getElementById('btn-register-submit');
+      btn.disabled = true; btn.innerText = 'Creando cuenta...';
+      await registerDemo(name, email, pass);
+      btn.disabled = false; btn.innerText = 'Crear mi Comercio Demo';
+    }
+  </script>
+</body>
+</html>

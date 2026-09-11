@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLOWUP CRM - Panel Administrativo Comercial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased selection:bg-[#10B981] selection:text-white min-h-screen flex flex-col">
+
+  <!-- ADMIN DASHBOARD CONTAINER -->
+  <div id="view-dashboard" class="flex-1 flex flex-col min-h-screen">
+    <!-- Header Admin Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-6 py-3.5 flex justify-between items-center shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#10B981] rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md shadow-[#10B981]/20">F</div>
+        <div>
+          <span class="text-lg font-black tracking-tight text-slate-900 leading-none block">FLOWUP <span class="text-[#10B981]">CRM</span></span>
+          <span class="text-[9px] font-bold text-slate-400 tracking-wider uppercase block" id="header-company-name">Panel Administrativo</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="plan-badge-display" class="px-3 py-1 bg-amber-100 text-amber-800 border border-amber-200 text-xs font-black rounded-full uppercase tracking-wider">Plan DEMO</span>
+        <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+          <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+          <span id="user-email-display" class="text-xs font-bold text-slate-700">admin@comercio.com</span>
+        </div>
+        <button onclick="logoutUser()" class="text-xs font-bold text-slate-500 hover:text-red-600 px-3 py-1.5 border border-slate-200 rounded-lg hover:border-red-200 transition">
+          ✕ Salir
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Sidebar Nav -->
+      <aside class="md:col-span-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm h-fit">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">Navegación</div>
+        <nav class="space-y-1">
+          <button onclick="switchTab('tab-overview')" id="nav-tab-overview" class="w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2.5 transition active-tab">
+            <span>📊</span> Resumen & Métricas
+          </button>
+          <button onclick="switchTab('tab-sellers')" id="nav-tab-sellers" class="w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2.5 transition">
+            <span>👥</span> Vendedores & Permisos
+          </button>
+          <button onclick="switchTab('tab-templates')" id="nav-tab-templates" class="w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2.5 transition">
+            <span>💬</span> Plantillas & Respuestas
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Section Tabs -->
+      <main class="md:col-span-3 space-y-6">
+        <!-- TAB 1: OVERVIEW -->
+        <div id="tab-overview" class="space-y-6 fade-in">
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 class="text-lg font-black text-slate-900 mb-4">Rendimiento Comercial</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                <span class="text-xs font-bold text-emerald-700 uppercase">Leads Registrados</span>
+                <p id="stat-leads-total" class="text-2xl font-black text-emerald-900 mt-1">0</p>
+              </div>
+              <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                <span class="text-xs font-bold text-blue-700 uppercase">Ventas Ganadas</span>
+                <p id="stat-ventas-ganadas" class="text-2xl font-black text-blue-900 mt-1">0</p>
+              </div>
+              <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                <span class="text-xs font-bold text-amber-700 uppercase">Tasa de Conversión</span>
+                <p id="stat-conversion-rate" class="text-2xl font-black text-amber-900 mt-1">0%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: SELLERS -->
+        <div id="tab-sellers" class="hidden space-y-6 fade-in">
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="text-lg font-black text-slate-900">Equipo de Vendedores</h3>
+                <p class="text-xs text-slate-500 font-medium">Gestiona accesos y credenciales de tus asesores comerciales</p>
+              </div>
+              <button onclick="document.getElementById('add-seller-modal').classList.remove('hidden')" class="px-4 py-2 bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs rounded-xl shadow-md transition">
+                + Nuevo Vendedor
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                    <th class="px-4 py-3">Email Vendedor</th>
+                    <th class="px-4 py-3">Rol</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="sellers-table-body">
+                  <tr><td colspan="4" class="text-center py-6 text-slate-400 font-semibold">Cargando vendedores...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: TEMPLATES -->
+        <div id="tab-templates" class="hidden space-y-6 fade-in">
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 class="text-lg font-black text-slate-900 mb-4">Plantillas de Respuesta Rápida</h3>
+            <div id="templates-list" class="space-y-3">
+              <div class="p-6 text-center text-slate-400 font-semibold">Cargando plantillas...</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT SELLER -->
+  <div id="edit-seller-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 border border-slate-100">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-black text-slate-900 text-lg">Editar Vendedor</h3>
+        <button onclick="document.getElementById('edit-seller-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+      <form id="form-edit-seller" onsubmit="submitEditSeller(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email del Vendedor</label>
+          <input type="email" id="edit-seller-email" readonly class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 text-sm font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nueva Contraseña</label>
+          <input type="text" id="edit-seller-password" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none">
+        </div>
+        <div class="pt-2 flex gap-3 justify-end">
+          <button type="button" onclick="document.getElementById('edit-seller-modal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50">Cancelar</button>
+          <button type="submit" id="btn-update-seller" class="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md">Actualizar Contraseña</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRM DELETE SELLER -->
+  <div id="confirm-delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-slate-100">
+      <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center font-black text-xl mb-3">⚠️</div>
+      <h3 class="text-lg font-black text-slate-900 mb-2">Eliminar Vendedor</h3>
+      <p class="text-xs text-slate-500 font-medium mb-6">¿Deseas revocar el acceso a <strong id="delete-seller-email-display" class="text-slate-800"></strong>?</p>
+      <div class="flex gap-3 justify-center">
+        <button type="button" onclick="document.getElementById('confirm-delete-modal').classList.add('hidden')" class="w-full py-2.5 border border-slate-300 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50">Cancelar</button>
+        <button type="button" id="btn-confirm-delete" onclick="executeDeleteSeller()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md">Sí, Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADD SELLER -->
+  <div id="add-seller-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 border border-slate-100">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-black text-slate-900 text-lg">Agregar Vendedor</h3>
+        <button onclick="document.getElementById('add-seller-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+      <form onsubmit="handleAddSellerSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email del Vendedor</label>
+          <input type="email" id="add-seller-email" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none" placeholder="vendedor@comercio.com">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+          <input type="password" id="add-seller-password" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none" placeholder="••••••••">
+        </div>
+        <div class="pt-2 flex gap-3 justify-end">
+          <button type="button" onclick="document.getElementById('add-seller-modal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50">Cancelar</button>
+          <button type="submit" id="btn-add-seller-submit" class="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md">Guardar Vendedor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="custom-toast" class="hidden">
+    <div class="flex items-center gap-3">
+      <div id="custom-toast-icon-container"></div>
+      <p id="custom-toast-msg" class="text-sm font-bold"></p>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = initSession();
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      if (document.getElementById('user-email-display')) document.getElementById('user-email-display').innerText = user.email || user.vendorName || 'Usuario';
+      if (document.getElementById('header-company-name')) document.getElementById('header-company-name').innerText = user.nombre_comercial || user.companyName || 'Panel Administrativo';
+      if (document.getElementById('plan-badge-display')) document.getElementById('plan-badge-display').innerText = 'Plan ' + (user.plan || 'DEMO');
+      
+      loadSellers();
+      loadDashboardMetrics();
+      loadQuickResponses();
+    });
+
+    function switchTab(tabId) {
+      ['tab-overview', 'tab-sellers', 'tab-templates'].forEach(id => {
+        const el = document.getElementById(id);
+        const nav = document.getElementById('nav-' + id);
+        if (el) el.classList.add('hidden');
+        if (nav) nav.classList.remove('bg-slate-100', 'text-[#10B981]');
+      });
+      const target = document.getElementById(tabId);
+      const targetNav = document.getElementById('nav-' + tabId);
+      if (target) target.classList.remove('hidden');
+      if (targetNav) targetNav.classList.add('bg-slate-100', 'text-[#10B981]');
+    }
+
+    async function handleAddSellerSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('add-seller-email').value;
+      const pass = document.getElementById('add-seller-password').value;
+      const btn = document.getElementById('btn-add-seller-submit');
+      btn.disabled = true; btn.innerText = 'Guardando...';
+      const res = await createSeller(email, pass);
+      btn.disabled = false; btn.innerText = 'Guardar Vendedor';
+      if (res.status === 'SUCCESS') {
+        document.getElementById('add-seller-modal').classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
