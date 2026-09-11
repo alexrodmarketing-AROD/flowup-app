@@ -284,13 +284,14 @@ window.showToast = showToast;
  * Guarda la sesión como tipo 'MASTER' en sessionStorage (no localStorage).
  */
 async function loginMaster(email, password) {
-  const res = await apiCall('authenticateMaster', { email, password });
-  if (res.status === 'SUCCESS' && res.data) {
-    sessionStorage.setItem('flowup_master_session', JSON.stringify(res.data));
+  const res = await apiCall('LOGIN_MASTER', { email, password });
+  const data = res.data || res;
+  if ((res.status === 'SUCCESS' || res.success === true || data.success === true) && data) {
+    sessionStorage.setItem('flowup_master_session', JSON.stringify(data));
     showToast('Acceso Master concedido.', 'success');
-    return { ok: true, data: res.data };
+    return { ok: true, data: data };
   } else {
-    showToast(res.message || 'Credenciales de Master incorrectas.', 'error');
+    showToast(res.message || (data && data.message) || 'Credenciales de Master incorrectas.', 'error');
     return { ok: false };
   }
 }
