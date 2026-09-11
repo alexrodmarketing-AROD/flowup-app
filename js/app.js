@@ -1,11 +1,12 @@
-﻿/**
- * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v147 — Global apiCall & Non-blocking Handlers
+/**
+ * app.js � Client API Rest & Dashboard Logic para GitHub Pages
+ * FLOWUP CRM v148 � Global apiCall & Non-blocking Handlers
  */
 
-// ── GLOBAL REST API CLIENT (window.apiCall) ─────────────────────────────────
+// -- GLOBAL REST API CLIENT (window.apiCall) ---------------------------------
 window.apiCall = async function apiCall(action, payload = {}) {
     const API_URL = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
+    
     try {
         const formData = new URLSearchParams();
         formData.append("action", action);
@@ -15,7 +16,11 @@ window.apiCall = async function apiCall(action, payload = {}) {
 
         const response = await fetch(API_URL, {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            },
+            body: formData.toString(),
+            redirect: "follow"
         });
 
         const rawText = await response.text();
@@ -27,7 +32,7 @@ window.apiCall = async function apiCall(action, payload = {}) {
         }
         return json;
     } catch (error) {
-        console.error("API Call Critical Error:", error);
+        console.warn("API Call Network Fallback:", error);
         return { status: "ERROR", success: false, message: error.toString() };
     }
 };
@@ -456,7 +461,7 @@ async function handleMasterLogin(event) {
             if (modal) modal.classList.add('hidden');
             if (typeof renderMasterUI === 'function') renderMasterUI();
         } else if (errEl) {
-            errEl.innerText = "Credenciales incorrectas. Verifique su email y contrase�a.";
+            errEl.innerText = "Credenciales incorrectas. Verifique su email y contrase?a.";
             errEl.classList.remove('hidden');
         }
     } catch (err) {
@@ -470,7 +475,7 @@ async function handleMasterLogin(event) {
 }
 window.handleMasterLogin = handleMasterLogin;
 
-// -- GLOBAL SCOPE EXPOSURES (v147) ---------------------------------------------
+// -- GLOBAL SCOPE EXPOSURES (v148) ---------------------------------------------
 window.togglePasswordVisibility = function(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -521,7 +526,7 @@ window.handleLoginSubmit = function(event) {
         btn.innerText = "Ingresando...";
     }
 
-    // Redirecci�n inmediata / Fallback de seguridad
+    // Redirecci?n inmediata / Fallback de seguridad
     setTimeout(() => {
         const userData = { email: email || "flatorre@gmail.com", companyName: "Empresa Registrada", role: "OWNER" };
         localStorage.setItem("flowup_commercial_session", JSON.stringify(userData));
@@ -570,4 +575,6 @@ window.handleMasterLogin = function(event) {
 window.getMasterSession = function() {
     return sessionStorage.getItem("masterToken");
 };
+
+
 
