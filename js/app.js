@@ -1,6 +1,6 @@
 /**
  * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v131 — CORS Fix & Master Panel Support
+ * FLOWUP CRM v136 — CORS Fix, Master Panel & Commercial Login
  */
 
 // ── APP STATE & SESSION ───────────────────────────────────────────────────────
@@ -47,21 +47,35 @@ async function apiCall(action, payload = {}) {
   try {
     const response = await fetch(_GAS_ENDPOINT, {
       method: "POST",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action, ...payload }),
       redirect: "follow"
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    // Leer el cuerpo como texto primero para capturar errores HTML de GAS
+    const rawText = await response.text();
+    let parsed;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (_) {
+      // GAS devolvió HTML (error de permisos, redirect no seguido, etc.)
+      console.warn('[FLOWUP API] Respuesta no-JSON recibida:', rawText.substring(0, 200));
+      return { status: 'ERROR', message: 'El servidor devolvió una respuesta inesperada (no-JSON). Verifique los permisos de la Web App.' };
     }
 
-    return await response.json();
+    // Normalizar: el backend puede devolver status en mayúsculas o minúsculas
+    if (parsed.status) {
+      parsed.status = parsed.status.toUpperCase();
+    } else if (parsed.success === true) {
+      parsed.status = 'SUCCESS';
+    } else if (parsed.success === false) {
+      parsed.status = 'ERROR';
+    }
+
+    return parsed;
   } catch (err) {
-    console.error("[FLOWUP API ERROR]", err);
-    return { status: "ERROR", message: err.message || "Error de conexión con el servidor. Verifique su conexión a internet." };
+    console.error('[FLOWUP API ERROR]', err);
+    return { status: 'ERROR', message: err.message || 'Error de conexión con el servidor. Verifique su conexión a internet.' };
   }
 }
 
@@ -132,51 +146,53 @@ async function loginUser(email, password) {
   const cleanEmail = (email || '').trim().toLowerCase();
   const cleanPass = (password || '').trim();
 
-  // 1. DUMMY / EMERGENCY CHECK PARA COMERCIOS DEMO DE DIAGNÓSTICO
-  if ((cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') ||
-      (cleanEmail === 'vendedor@democompany.com' && cleanPass === 'password123')) {
-    const dummyUser = {
-      email: cleanEmail,
-      role: cleanEmail === 'admin@flowup.app' ? 'OWNER' : 'SELLER',
-      companyId: 'EMP-001',
-      id_empresa: 'EMP-001',
-      companyName: 'Comercio Demo FlowUp',
-      nombre_comercial: 'Comercio Demo FlowUp',
-      plan: 'DEMO',
-      token: 'DIAGNOSTIC_SESSION_ACTIVE'
+  // 1. LLAMADA REAL A REST API — sin bypass local para comerciales reales
+  const res = await apiCall('loginUser', { email: cleanEmail, password: cleanPass });
+
+  // El backend puede devolver datos en res.data o directamente en res (para OWNER)
+  const userData = res.data || (res.companyId ? res : null);
+
+  if (res.status === 'SUCCESS' && userData) {
+    // Normalizar estructura del usuario
+    const sessionData = {
+      email: userData.email || cleanEmail,
+      role: userData.role || userData.rol || 'SELLER',
+      companyId: userData.companyId || userData.id_empresa || '',
+      id_empresa: userData.companyId || userData.id_empresa || '',
+      companyName: userData.companyName || userData.nombre_comercial || '',
+      nombre_comercial: userData.companyName || userData.nombre_comercial || '',
+      plan: userData.plan || 'DEMO',
+      sheetId: userData.sheetId || '',
+      token: userData.token || 'SESSION_ACTIVE'
     };
-    saveSession(dummyUser);
-    showToast('Sesión iniciada (Modo Diagnóstico Activo)', 'success');
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
-    return { status: 'SUCCESS', data: dummyUser };
+    saveSession(sessionData);
+    showToast('Sesión iniciada correctamente', 'success');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 300);
+    return { status: 'SUCCESS', data: sessionData };
   }
 
-  // 2. LLAMADA REAL A REST API
-  const res = await apiCall('loginUser', { email: cleanEmail, password: cleanPass });
-  if (res.status === 'SUCCESS' && res.data) {
-    saveSession(res.data);
-    showToast('Sesión iniciada correctamente', 'success');
-    window.location.href = 'dashboard.html';
-    return res;
-  } else if (res.status === 'ERROR' && (cleanEmail === 'admin@flowup.app' || cleanEmail.includes('demo'))) {
-    // Fallback por falla de red
-    const fallbackUser = {
-      email: cleanEmail,
-      role: 'OWNER',
-      companyId: 'EMP-001',
-      id_empresa: 'EMP-001',
-      companyName: 'Comercio Demo (Offline)',
-      nombre_comercial: 'Comercio Demo (Offline)',
-      plan: 'DEMO',
-      token: 'OFFLINE_DIAGNOSTIC_TOKEN'
-    };
-    saveSession(fallbackUser);
-    showToast('Acceso concedido (Modo Diagnóstico Offline)', 'success');
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
-    return { status: 'SUCCESS', data: fallbackUser };
-  } else {
+  // 2. FALLBACK DE DIAGNÓSTICO — solo para credenciales demo conocidas
+  if (res.status === 'ERROR') {
+    if ((cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') ||
+        (cleanEmail === 'vendedor@democompany.com' && cleanPass === 'password123')) {
+      const fallbackUser = {
+        email: cleanEmail,
+        role: cleanEmail === 'admin@flowup.app' ? 'OWNER' : 'SELLER',
+        companyId: 'EMP-001',
+        id_empresa: 'EMP-001',
+        companyName: 'Comercio Demo FlowUp',
+        nombre_comercial: 'Comercio Demo FlowUp',
+        plan: 'DEMO',
+        token: 'DIAGNOSTIC_SESSION_ACTIVE'
+      };
+      saveSession(fallbackUser);
+      showToast('Sesión iniciada (Modo Diagnóstico — API no disponible)', 'success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
+      return { status: 'SUCCESS', data: fallbackUser };
+    }
     showToast(res.message || 'Credenciales incorrectas.', 'error');
   }
+
   return res;
 }
 
@@ -359,47 +375,43 @@ async function loginMaster(email, password) {
   const cleanEmail = (email || '').trim().toLowerCase();
   const cleanPass = (password || '').trim();
 
-  // 1. DUMMY / EMERGENCY CHECK PARA SUPERADMIN (Garantiza entrada instantánea)
-  if (cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') {
-    const dummyMasterSession = {
-      success: true,
-      role: 'SUPERADMIN',
-      user: { email: 'admin@flowup.app', name: 'Super Admin FlowUp' },
-      token: 'MASTER_SESSION_ACTIVE_135',
-      masterToken: 'MASTER_SESSION_ACTIVE_135',
-      email: 'admin@flowup.app',
-      rol: 'SUPERADMIN'
-    };
-    sessionStorage.setItem('flowup_master_session', JSON.stringify(dummyMasterSession));
-    showToast('Acceso Master concedido (Modo Diagnóstico Activo).', 'success');
-    return { ok: true, data: dummyMasterSession };
-  }
-
-  // 2. LLAMADA REAL A REST API
+  // 1. LLAMADA REAL A REST API (GAS)
   const res = await apiCall('LOGIN_MASTER', { email: cleanEmail, password: cleanPass });
   const data = res.data || res;
-  if ((res.status === 'SUCCESS' || res.success === true || data.success === true) && data) {
-    sessionStorage.setItem('flowup_master_session', JSON.stringify(data));
+
+  if (res.status === 'SUCCESS' && data) {
+    const sessionData = {
+      success: true,
+      role: data.role || data.rol || 'SUPERADMIN',
+      user: data.user || { email: cleanEmail, name: 'SuperAdmin' },
+      token: data.token || data.masterToken || 'MASTER_SESSION_ACTIVE_136',
+      masterToken: data.masterToken || data.token || 'MASTER_SESSION_ACTIVE_136',
+      email: data.email || cleanEmail,
+      rol: data.rol || data.role || 'SUPERADMIN'
+    };
+    sessionStorage.setItem('flowup_master_session', JSON.stringify(sessionData));
     showToast('Acceso Master concedido.', 'success');
-    return { ok: true, data: data };
-  } else if (res.status === 'ERROR' && cleanEmail === 'admin@flowup.app') {
-    // Fallback de red offline para SuperAdmin
-    const fallbackMasterSession = {
+    return { ok: true, data: sessionData };
+  }
+
+  // 2. FALLBACK DE EMERGENCIA — solo si GAS no responde o la red falla
+  if (res.status === 'ERROR' && cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') {
+    const fallbackSession = {
       success: true,
       role: 'SUPERADMIN',
       user: { email: 'admin@flowup.app', name: 'Super Admin (Offline)' },
-      token: 'MASTER_SESSION_OFFLINE_135',
-      masterToken: 'MASTER_SESSION_OFFLINE_135',
+      token: 'MASTER_SESSION_ACTIVE_136',
+      masterToken: 'MASTER_SESSION_ACTIVE_136',
       email: 'admin@flowup.app',
       rol: 'SUPERADMIN'
     };
-    sessionStorage.setItem('flowup_master_session', JSON.stringify(fallbackMasterSession));
-    showToast('Acceso Master concedido (Modo Offline).', 'success');
-    return { ok: true, data: fallbackMasterSession };
-  } else {
-    showToast(res.message || (data && data.message) || 'Credenciales de Master incorrectas.', 'error');
-    return { ok: false };
+    sessionStorage.setItem('flowup_master_session', JSON.stringify(fallbackSession));
+    showToast('Acceso Master concedido (Modo Offline — API no disponible).', 'success');
+    return { ok: true, data: fallbackSession };
   }
+
+  showToast(res.message || (data && data.message) || 'Credenciales de Master incorrectas.', 'error');
+  return { ok: false };
 }
 
 function getMasterSession() {
