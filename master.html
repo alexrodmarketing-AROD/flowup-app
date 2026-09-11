@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>FLOWUP CRM — Control Center</title>
+  <title>FLOWUP CRM � Control Center</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-<!-- ════════════ LOGIN SCREEN ════════════ -->
+<!-- ------------ LOGIN SCREEN ------------ -->
 <div id="screen-login" class="flex-1 flex items-center justify-center p-4 min-h-screen fade-in">
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
     <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
@@ -42,7 +42,7 @@
       <div class="w-11 h-11 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg shadow-emerald-900/50">F</div>
       <div>
         <span class="block text-lg font-black tracking-tight text-white leading-none">FLOWUP <span class="text-emerald-400">CRM</span></span>
-        <span class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Control Center · SuperAdmin</span>
+        <span class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Control Center � SuperAdmin</span>
       </div>
     </div>
     <h1 class="text-xl font-black text-white text-center mb-1">Acceso Restringido</h1>
@@ -55,11 +55,11 @@
           placeholder="superadmin@flowupcrm.com">
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contraseña Master</label>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contrase�a Master</label>
         <div class="relative">
           <input type="password" id="master-password" required autocomplete="off"
             class="w-full px-4 py-3 pr-11 bg-slate-900 border border-slate-700 rounded-xl text-sm font-semibold text-white placeholder-slate-600 transition"
-            placeholder="••••••••••">
+            placeholder="����������">
           <button type="button" onclick="togglePasswordVisibility('master-password','eyeIconMaster')"
             class="absolute right-3 top-3 text-slate-500 hover:text-slate-300">
             <svg id="eyeIconMaster" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,11 +75,11 @@
       </button>
     </form>
     <p id="login-error-msg" class="hidden mt-4 text-center text-xs font-bold text-red-400 bg-red-900/20 border border-red-800/40 rounded-lg py-2.5 px-3"></p>
-    <p class="text-center text-[10px] text-slate-700 mt-6 font-semibold">Acceso no autorizado constituye una violación de los TOS de FLOWUP CRM.</p>
+    <p class="text-center text-[10px] text-slate-700 mt-6 font-semibold">Acceso no autorizado constituye una violaci�n de los TOS de FLOWUP CRM.</p>
   </div>
 </div>
 
-<!-- ════════════ MASTER DASHBOARD ════════════ -->
+<!-- ------------ MASTER DASHBOARD ------------ -->
 <div id="screen-dashboard" class="hidden flex-1 flex flex-col min-h-screen">
 
   <!-- Navbar -->
@@ -88,24 +88,24 @@
       <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-lg flex items-center justify-center font-black text-white shadow-md">F</div>
       <div>
         <span class="text-base font-black tracking-tight text-white">FLOWUP <span class="text-emerald-400">Control Center</span></span>
-        <span class="block text-[9px] font-bold text-slate-600 uppercase tracking-widest">SuperAdmin Panel · v138</span>
+        <span class="block text-[9px] font-bold text-slate-600 uppercase tracking-widest">SuperAdmin Panel � v138</span>
       </div>
     </div>
     <div class="flex items-center gap-4">
       <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
-      <span id="master-user-display" class="text-xs font-bold text-slate-400">—</span>
+      <span id="master-user-display" class="text-xs font-bold text-slate-400">�</span>
       <button onclick="logoutMaster()"
         class="text-xs font-bold text-slate-500 hover:text-red-400 px-3 py-1.5 border border-slate-700 hover:border-red-800/60 rounded-lg transition">
-        ✕ Cerrar Sesión
+        ? Cerrar Sesi�n
       </button>
     </div>
   </header>
 
   <div class="flex flex-1 overflow-hidden">
 
-    <!-- ── Sidebar ── -->
+    <!-- -- Sidebar -- -->
     <aside class="w-60 bg-slate-900 border-r border-slate-800 p-3 flex flex-col gap-1 pt-5 flex-shrink-0 overflow-y-auto">
-      <div class="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-3 mb-2">Módulos</div>
+      <div class="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-3 mb-2">M�dulos</div>
 
       <button onclick="switchTab('tab-dashboard')" id="nav-tab-dashboard" class="sidebar-btn active">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -124,7 +124,7 @@
 
       <button onclick="switchTab('tab-rubros')" id="nav-tab-rubros" class="sidebar-btn">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-        Gestión de Rubros
+        Gesti�n de Rubros
       </button>
 
       <button onclick="switchTab('tab-planes')" id="nav-tab-planes" class="sidebar-btn">
@@ -133,38 +133,38 @@
       </button>
     </aside>
 
-    <!-- ── Main ── -->
+    <!-- -- Main -- -->
     <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950">
 
-      <!-- ══════════════════════════════════════
+      <!-- --------------------------------------
            TAB 1: DASHBOARD & COMERCIOS
-      ══════════════════════════════════════ -->
+      -------------------------------------- -->
       <div id="tab-dashboard" class="tab-content active space-y-6 fade-in">
         <div>
           <h2 class="text-xl font-black text-white">Dashboard &amp; Comercios</h2>
-          <p class="text-xs text-slate-500 font-medium mt-0.5">Visión global de todas las empresas registradas en FLOWUP CRM</p>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Visi�n global de todas las empresas registradas en FLOWUP CRM</p>
         </div>
 
         <!-- KPIs -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="kpi-card">
             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Total Comercios</p>
-            <p id="kpi-total" class="text-3xl font-black text-white">—</p>
+            <p id="kpi-total" class="text-3xl font-black text-white">�</p>
             <p class="text-[10px] text-slate-600 mt-1">registrados en BD</p>
           </div>
           <div class="kpi-card">
             <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-wider mb-2">Licencias Activas</p>
-            <p id="kpi-activas" class="text-3xl font-black text-emerald-400">—</p>
-            <p class="text-[10px] text-slate-600 mt-1">cuentas en producción</p>
+            <p id="kpi-activas" class="text-3xl font-black text-emerald-400">�</p>
+            <p class="text-[10px] text-slate-600 mt-1">cuentas en producci�n</p>
           </div>
           <div class="kpi-card">
             <p class="text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-2">En Demo</p>
-            <p id="kpi-demo" class="text-3xl font-black text-amber-400">—</p>
-            <p class="text-[10px] text-slate-600 mt-1">período de prueba</p>
+            <p id="kpi-demo" class="text-3xl font-black text-amber-400">�</p>
+            <p class="text-[10px] text-slate-600 mt-1">per�odo de prueba</p>
           </div>
           <div class="kpi-card">
             <p class="text-[11px] font-bold text-blue-400 uppercase tracking-wider mb-2">Vendedores</p>
-            <p id="kpi-vendedores" class="text-3xl font-black text-blue-400">—</p>
+            <p id="kpi-vendedores" class="text-3xl font-black text-blue-400">�</p>
             <p class="text-[10px] text-slate-600 mt-1">en toda la plataforma</p>
           </div>
         </div>
@@ -207,13 +207,13 @@
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════
+      <!-- --------------------------------------
            TAB 2: MOTOR IA
-      ══════════════════════════════════════ -->
+      -------------------------------------- -->
       <div id="tab-motor-ia" class="tab-content space-y-6 fade-in">
         <div>
           <h2 class="text-xl font-black text-white">Motor IA</h2>
-          <p class="text-xs text-slate-500 font-medium mt-0.5">Configuración global del motor de inteligencia artificial para el Copiloto</p>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Configuraci�n global del motor de inteligencia artificial para el Copiloto</p>
         </div>
 
         <!-- Gemini API Key -->
@@ -239,20 +239,20 @@
           </form>
         </div>
 
-        <!-- Modelo y Configuración -->
+        <!-- Modelo y Configuraci�n -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          <h3 class="text-sm font-black text-white mb-4">Parámetros del Modelo</h3>
+          <h3 class="text-sm font-black text-white mb-4">Par�metros del Modelo</h3>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Modelo Gemini</label>
               <select id="ia-model" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white transition">
-                <option value="gemini-1.5-flash">gemini-1.5-flash (Rápido)</option>
+                <option value="gemini-1.5-flash">gemini-1.5-flash (R�pido)</option>
                 <option value="gemini-1.5-pro">gemini-1.5-pro (Potente)</option>
                 <option value="gemini-2.0-flash">gemini-2.0-flash (Ultra)</option>
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Temperatura (0–1)</label>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Temperatura (0�1)</label>
               <input type="number" id="ia-temperature" value="0.7" min="0" max="1" step="0.1"
                 class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white transition">
             </div>
@@ -264,28 +264,28 @@
           </div>
           <button onclick="handleSaveMotorConfig()"
             class="mt-5 px-5 py-2.5 bg-blue-700 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition shadow-md">
-            Guardar Configuración del Motor
+            Guardar Configuraci�n del Motor
           </button>
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════
+      <!-- --------------------------------------
            TAB 3: MOTOR DE ESTRATEGIAS
-      ══════════════════════════════════════ -->
+      -------------------------------------- -->
       <div id="tab-estrategias" class="tab-content space-y-6 fade-in">
         <div>
           <h2 class="text-xl font-black text-white">Motor de Estrategias</h2>
-          <p class="text-xs text-slate-500 font-medium mt-0.5">Reglas globales de seguimiento, fórmulas de conversión y triggers de venta</p>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Reglas globales de seguimiento, f�rmulas de conversi�n y triggers de venta</p>
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-5">
           <div>
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Estrategia Global por Defecto</label>
             <select id="estrategia-global" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-bold text-white transition">
-              <option value="ESTANDAR">ESTANDAR — Seguimiento balanceado</option>
-              <option value="AGRESIVA">AGRESIVA — Máxima presión de cierre</option>
-              <option value="CONSULTIVA">CONSULTIVA — Venta de alto valor, largo ciclo</option>
-              <option value="REACTIVACION">REACTIVACION — Para leads fríos</option>
+              <option value="ESTANDAR">ESTANDAR � Seguimiento balanceado</option>
+              <option value="AGRESIVA">AGRESIVA � M�xima presi�n de cierre</option>
+              <option value="CONSULTIVA">CONSULTIVA � Venta de alto valor, largo ciclo</option>
+              <option value="REACTIVACION">REACTIVACION � Para leads fr�os</option>
             </select>
           </div>
           <div>
@@ -308,7 +308,7 @@
               <input type="number" id="followup-3" value="72" min="1" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white transition">
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Máx. Intentos</label>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">M�x. Intentos</label>
               <input type="number" id="followup-max" value="5" min="1" max="20" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white transition">
             </div>
           </div>
@@ -319,14 +319,14 @@
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════
-           TAB 4: GESTIÓN DE RUBROS
-      ══════════════════════════════════════ -->
+      <!-- --------------------------------------
+           TAB 4: GESTI�N DE RUBROS
+      -------------------------------------- -->
       <div id="tab-rubros" class="tab-content space-y-6 fade-in">
         <div class="flex justify-between items-start">
           <div>
-            <h2 class="text-xl font-black text-white">Gestión de Rubros</h2>
-            <p class="text-xs text-slate-500 font-medium mt-0.5">Sectores comerciales y subcategorías del sistema de onboarding</p>
+            <h2 class="text-xl font-black text-white">Gesti�n de Rubros</h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Sectores comerciales y subcategor�as del sistema de onboarding</p>
           </div>
           <button onclick="openNewRubroModal()"
             class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition shadow-md flex items-center gap-2">
@@ -338,7 +338,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <div id="rubros-loading" class="text-center py-8 text-slate-600 font-semibold text-sm">
             <svg class="w-5 h-5 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-            Cargando catálogo de rubros...
+            Cargando cat�logo de rubros...
           </div>
           <div id="rubros-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
@@ -355,27 +355,27 @@
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════
+      <!-- --------------------------------------
            TAB 5: PLANES & LANDING
-      ══════════════════════════════════════ -->
+      -------------------------------------- -->
       <div id="tab-planes" class="tab-content space-y-6 fade-in">
         <div>
           <h2 class="text-xl font-black text-white">Planes &amp; Landing</h2>
-          <p class="text-xs text-slate-500 font-medium mt-0.5">Configura los precios, límites y textos de presentación de cada plan</p>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Configura los precios, l�mites y textos de presentaci�n de cada plan</p>
         </div>
 
         <div id="planes-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <!-- Se generan dinámicamente -->
+          <!-- Se generan din�micamente -->
           <div class="col-span-full text-center py-10 text-slate-600 font-semibold text-sm">
             <svg class="w-5 h-5 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-            Cargando configuración de planes...
+            Cargando configuraci�n de planes...
           </div>
         </div>
 
         <div class="flex gap-3 pt-2">
           <button onclick="savePlanesConfig()"
             class="px-6 py-2.5 bg-purple-700 hover:bg-purple-600 text-white text-sm font-bold rounded-xl transition shadow-md">
-            Guardar Configuración de Planes
+            Guardar Configuraci�n de Planes
           </button>
         </div>
       </div>
@@ -384,12 +384,12 @@
   </div>
 </div>
 
-<!-- ══════ MODAL: GESTIONAR LICENCIA ══════ -->
+<!-- ------ MODAL: GESTIONAR LICENCIA ------ -->
 <div id="modal-edit-license" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl">
     <div class="flex justify-between items-center mb-5">
       <h3 class="text-lg font-black text-white">Gestionar Licencia</h3>
-      <button onclick="closeLicenseModal()" class="text-slate-500 hover:text-slate-300 font-bold text-xl leading-none">✕</button>
+      <button onclick="closeLicenseModal()" class="text-slate-500 hover:text-slate-300 font-bold text-xl leading-none">?</button>
     </div>
     <form id="form-edit-license" onsubmit="submitLicense(event)" class="space-y-4">
       <input type="hidden" id="lic-company-id">
@@ -419,7 +419,7 @@
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ciclo Facturación</label>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ciclo Facturaci�n</label>
           <select id="lic-ciclo" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-bold text-white transition">
             <option value="MENSUAL">MENSUAL (30d)</option>
             <option value="TRIMESTRAL">TRIMESTRAL (90d)</option>
@@ -446,25 +446,25 @@
   </div>
 </div>
 
-<!-- ══════ MODAL: NUEVO RUBRO ══════ -->
+<!-- ------ MODAL: NUEVO RUBRO ------ -->
 <div id="modal-new-rubro" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
     <div class="flex justify-between items-center mb-5">
       <h3 class="text-base font-black text-white">Nuevo Rubro</h3>
-      <button onclick="closeNewRubroModal()" class="text-slate-500 hover:text-slate-300 font-bold text-xl leading-none">✕</button>
+      <button onclick="closeNewRubroModal()" class="text-slate-500 hover:text-slate-300 font-bold text-xl leading-none">?</button>
     </div>
     <form onsubmit="handleSaveRubro(event)" class="space-y-4">
       <div>
         <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Familia / Sector</label>
         <input type="text" id="rubro-familia" required
           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-semibold text-white transition"
-          placeholder="Ej: Tecnología y Electrónica">
+          placeholder="Ej: Tecnolog�a y Electr�nica">
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Subcategorías (separadas por coma)</label>
+        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Subcategor�as (separadas por coma)</label>
         <textarea id="rubro-subs" rows="3"
           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-300 resize-none transition"
-          placeholder="Telefonía, Computadoras, Accesorios, Reparación"></textarea>
+          placeholder="Telefon�a, Computadoras, Accesorios, Reparaci�n"></textarea>
       </div>
       <button type="submit" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition">
         Guardar Rubro
@@ -473,7 +473,7 @@
   </div>
 </div>
 
-<!-- ══════ TOAST ══════ -->
+<!-- ------ TOAST ------ -->
 <div id="custom-toast" class="hidden fixed bottom-4 right-4 z-[9999]">
   <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-bold">
     <div id="custom-toast-icon-container"></div>
@@ -481,10 +481,10 @@
   </div>
 </div>
 
-<!-- ══════ SCRIPTS ══════ -->
-<script src="./js/app.js?v=143"></script>
+<!-- ------ SCRIPTS ------ -->
+<script src="./js/app.js?v=144"></script>
 <script>
-// ── TAB NAVIGATION ────────────────────────────────────────────────────────────
+// -- TAB NAVIGATION ------------------------------------------------------------
 const ALL_TABS = ['tab-dashboard','tab-motor-ia','tab-estrategias','tab-rubros','tab-planes'];
 
 function switchTab(tabId) {
@@ -499,14 +499,14 @@ function switchTab(tabId) {
   if (target) { target.classList.add('active'); }
   if (navBtn) { navBtn.classList.add('active'); }
 
-  // Carga lazy por pestaña
+  // Carga lazy por pesta�a
   if (tabId === 'tab-motor-ia')    loadMotorIAConfig();
   if (tabId === 'tab-estrategias') loadEstrategiasConfig();
   if (tabId === 'tab-rubros')      loadRubros();
   if (tabId === 'tab-planes')      loadPlanesConfig();
 }
 
-// ── LOGIN ─────────────────────────────────────────────────────────────────────
+// -- LOGIN ---------------------------------------------------------------------
 async function handleMasterLogin(e) {
   e.preventDefault();
   const email    = document.getElementById('master-email').value.trim();
@@ -535,14 +535,14 @@ async function handleMasterLogin(e) {
   }
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// -- INIT ----------------------------------------------------------------------
 async function initDashboard(userData) {
-  const email = userData.email || userData.masterEmail || '—';
+  const email = userData.email || userData.masterEmail || '�';
   document.getElementById('master-user-display').textContent = email;
   await loadDashboardData();
 }
 
-// ── TAB 1: DASHBOARD DATA ─────────────────────────────────────────────────────
+// -- TAB 1: DASHBOARD DATA -----------------------------------------------------
 let _allComercios = [];
 
 async function loadDashboardData() {
@@ -588,16 +588,16 @@ function renderComerciosTable(comercios) {
     return `
     <tr class="border-b border-slate-800/60 row-hover transition-colors">
       <td class="px-4 py-3">
-        <p class="font-bold text-white text-sm">${c.nombre || '—'}</p>
-        <p class="text-[11px] text-slate-600 font-mono">${c.id || '—'}</p>
+        <p class="font-bold text-white text-sm">${c.nombre || '�'}</p>
+        <p class="text-[11px] text-slate-600 font-mono">${c.id || '�'}</p>
       </td>
-      <td class="px-4 py-3 text-xs text-slate-400 font-semibold">${c.email || '—'}</td>
-      <td class="px-4 py-3 text-xs text-slate-500 font-semibold max-w-[120px] truncate">${c.rubro || '—'}</td>
+      <td class="px-4 py-3 text-xs text-slate-400 font-semibold">${c.email || '�'}</td>
+      <td class="px-4 py-3 text-xs text-slate-500 font-semibold max-w-[120px] truncate">${c.rubro || '�'}</td>
       <td class="px-4 py-3"><span class="text-xs font-extrabold ${planCls}">${plan}</span></td>
       <td class="px-4 py-3">
         <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold ${statusCls}">${estado}</span>
       </td>
-      <td class="px-4 py-3 text-xs text-slate-500 font-semibold">${c.fechaVencimiento || '—'}</td>
+      <td class="px-4 py-3 text-xs text-slate-500 font-semibold">${c.fechaVencimiento || '�'}</td>
       <td class="px-4 py-3 text-right">
         <button onclick="openLicenseModal('${c.id}','${(c.nombre||'').replace(/'/g,"\\'")}','${plan}','${estado}','${c.ciclo||'MENSUAL'}')"
           class="text-xs font-bold text-emerald-500 hover:text-emerald-300 border border-emerald-900/50 hover:border-emerald-600/60 px-3 py-1.5 rounded-lg transition">
@@ -618,7 +618,7 @@ function filterComerciosTable() {
   renderComerciosTable(filtered);
 }
 
-// ── TAB 2: MOTOR IA ───────────────────────────────────────────────────────────
+// -- TAB 2: MOTOR IA -----------------------------------------------------------
 async function loadMotorIAConfig() {
   const session = getMasterSession();
   const res = await apiCall('getMasterConfig', {
@@ -627,10 +627,10 @@ async function loadMotorIAConfig() {
   const statusEl = document.getElementById('gemini-key-status');
   if (res.status === 'SUCCESS' && res.data) {
     if (res.data.GEMINI_API_KEY_SET) {
-      statusEl.textContent = '✅ API Key configurada: ' + (res.data.GEMINI_API_KEY_MASKED || '••••••••');
+      statusEl.textContent = '? API Key configurada: ' + (res.data.GEMINI_API_KEY_MASKED || '��������');
       statusEl.className = 'mt-1.5 text-[11px] font-bold text-emerald-500';
     } else {
-      statusEl.textContent = '⚠️ No hay API Key configurada.';
+      statusEl.textContent = '?? No hay API Key configurada.';
       statusEl.className = 'mt-1.5 text-[11px] font-bold text-amber-500';
     }
     if (res.data.MOTOR_CONFIG) {
@@ -675,10 +675,10 @@ async function handleSaveMotorConfig() {
     masterToken: session ? (session.masterToken || session.token) : '',
     motorConfig
   });
-  showToast('Configuración del Motor IA guardada.', 'success');
+  showToast('Configuraci�n del Motor IA guardada.', 'success');
 }
 
-// ── TAB 3: ESTRATEGIAS ────────────────────────────────────────────────────────
+// -- TAB 3: ESTRATEGIAS --------------------------------------------------------
 async function loadEstrategiasConfig() {
   const session = getMasterSession();
   const res = await apiCall('getMasterConfig', {
@@ -714,7 +714,7 @@ async function handleSaveEstrategias() {
   showToast('Motor de Estrategias guardado.', 'success');
 }
 
-// ── TAB 4: RUBROS ─────────────────────────────────────────────────────────────
+// -- TAB 4: RUBROS -------------------------------------------------------------
 async function loadRubros() {
   const loadEl = document.getElementById('rubros-loading');
   const gridEl = document.getElementById('rubros-grid');
@@ -739,7 +739,7 @@ async function loadRubros() {
       </div>
     `).join('');
   } else {
-    gridEl.innerHTML = `<div class="col-span-full text-center text-slate-500 font-semibold text-sm py-6">No se pudo cargar el catálogo.</div>`;
+    gridEl.innerHTML = `<div class="col-span-full text-center text-slate-500 font-semibold text-sm py-6">No se pudo cargar el cat�logo.</div>`;
   }
 }
 
@@ -747,8 +747,8 @@ async function loadOtrosRubros() {
   const container = document.getElementById('otros-rubros-container');
   container.textContent = 'Cargando...';
   const session = getMasterSession();
-  /* getOtrosRubros no está en el switch aún — usamos getMasterRubros que incluye el catalog */
-  container.innerHTML = `<p class="text-slate-500 text-xs font-semibold">Funcionalidad disponible en próxima versión.</p>`;
+  /* getOtrosRubros no est� en el switch a�n � usamos getMasterRubros que incluye el catalog */
+  container.innerHTML = `<p class="text-slate-500 text-xs font-semibold">Funcionalidad disponible en pr�xima versi�n.</p>`;
 }
 
 function openNewRubroModal()  { document.getElementById('modal-new-rubro').classList.remove('hidden'); }
@@ -773,7 +773,7 @@ async function handleSaveRubro(e) {
   }
 }
 
-// ── TAB 5: PLANES ─────────────────────────────────────────────────────────────
+// -- TAB 5: PLANES -------------------------------------------------------------
 let _planesData = {};
 
 async function loadPlanesConfig() {
@@ -820,7 +820,7 @@ function renderPlanesGrid(planes) {
             class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm font-bold text-white transition">
         </div>
         <div>
-          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Descripción</label>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Descripci�n</label>
           <textarea id="plan-desc-${key}" rows="2"
             class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-300 resize-none transition">${p.descripcion || ''}</textarea>
         </div>
@@ -846,14 +846,14 @@ async function savePlanesConfig() {
     planesJson: JSON.stringify(planesActualizados)
   });
   if (res.status === 'SUCCESS') {
-    showToast('Configuración de planes guardada.', 'success');
+    showToast('Configuraci�n de planes guardada.', 'success');
     _planesData = planesActualizados;
   } else {
     showToast(res.message || 'Error al guardar planes.', 'error');
   }
 }
 
-// ── LICENSE MODAL ─────────────────────────────────────────────────────────────
+// -- LICENSE MODAL -------------------------------------------------------------
 function openLicenseModal(id, nombre, plan, estado, ciclo) {
   document.getElementById('lic-company-id').value   = id;
   document.getElementById('lic-company-name').value = nombre;
@@ -894,7 +894,7 @@ async function submitLicense(e) {
   }
 }
 
-// ── AUTO-RESTORE SESSION ──────────────────────────────────────────────────────
+// -- AUTO-RESTORE SESSION ------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   const session = getMasterSession();
   if (session) {
@@ -908,3 +908,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+

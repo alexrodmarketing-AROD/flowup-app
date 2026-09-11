@@ -1,4 +1,4 @@
-/**
+﻿/**
  * app.js ? Client API Rest & Dashboard Logic para GitHub Pages
  * FLOWUP CRM v143 ? CORS Bypass Definitivo & DB Handlers
  */
@@ -582,3 +582,44 @@ window.loadAllCompanies = loadAllCompanies;
 window.updateCompanyLicense = updateCompanyLicense;
 window.saveMasterGeminiKey = saveMasterGeminiKey;
 
+
+
+
+
+
+async function handleMasterLogin(event) {
+    if (event) event.preventDefault();
+    const btn = document.getElementById("btn-master-login") || (event && event.target ? event.target.querySelector("button[type='submit']") : null);
+    const originalText = btn ? btn.innerHTML : "Ingresar al Control Center";
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Verificando...`;
+    }
+
+    try {
+        const email = document.getElementById("master-email") ? document.getElementById("master-email").value : "";
+        const password = document.getElementById("master-password") ? document.getElementById("master-password").value : "";
+        const errEl = document.getElementById('login-error-msg');
+        if (errEl) errEl.classList.add('hidden');
+
+        const result = await loginMaster(email, password);
+
+        if (result && result.ok) {
+            const modal = document.getElementById('master-login-modal');
+            if (modal) modal.classList.add('hidden');
+            if (typeof renderMasterUI === 'function') renderMasterUI();
+        } else if (errEl) {
+            errEl.innerText = "Credenciales incorrectas. Verifique su email y contraseña.";
+            errEl.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error("handleMasterLogin Exception:", err);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+}
+window.handleMasterLogin = handleMasterLogin;
