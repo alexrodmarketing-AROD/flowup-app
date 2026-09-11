@@ -1,6 +1,6 @@
 /**
  * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v137 — Vinculación explícita a BD por ID (openById fix)
+ * FLOWUP CRM v138 — Vinculación explícita a BD por ID (openById fix)
  */
 
 // ── APP STATE & SESSION ───────────────────────────────────────────────────────
