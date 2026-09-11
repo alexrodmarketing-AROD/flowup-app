@@ -1,6 +1,6 @@
 /**
- * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v148 — Global apiCall & Non-blocking Handlers
+ * app.js ? Client API Rest & Dashboard Logic para GitHub Pages
+ * FLOWUP CRM v149 ? Global apiCall & Non-blocking Handlers
  */
 
 // -- GLOBAL REST API CLIENT (window.apiCall) ---------------------------------
@@ -475,7 +475,7 @@ async function handleMasterLogin(event) {
 }
 window.handleMasterLogin = handleMasterLogin;
 
-// -- GLOBAL SCOPE EXPOSURES (v148) ---------------------------------------------
+// -- GLOBAL SCOPE EXPOSURES (v149) ---------------------------------------------
 window.togglePasswordVisibility = function(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -575,6 +575,7 @@ window.handleMasterLogin = function(event) {
 window.getMasterSession = function() {
     return sessionStorage.getItem("masterToken");
 };
+
 
 
 
