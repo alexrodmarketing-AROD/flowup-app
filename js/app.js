@@ -1,9 +1,9 @@
-﻿/**
- * app.js — Client API Rest & Dashboard Logic para GitHub Pages
- * FLOWUP CRM v140 — CORS Bypass Definitivo & DB Handlers
+/**
+ * app.js � Client API Rest & Dashboard Logic para GitHub Pages
+ * FLOWUP CRM v141 � CORS Bypass Definitivo & DB Handlers
  */
 
-// ── APP STATE & SESSION ───────────────────────────────────────────────────────
+// -- APP STATE & SESSION -------------------------------------------------------
 let currentUser = null;
 
 function initSession() {
@@ -37,26 +37,26 @@ function resolveCompanyId() {
       || localStorage.getItem('companyId') || '';
 }
 
-// ── UNIFIED REST API CLIENT (CORS Dual-Strategy v140) ─────────────────────────
+// -- UNIFIED REST API CLIENT (CORS Dual-Strategy v141) -------------------------
 const _GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
 
 /**
- * apiCall — Estrategia dual para evitar bloqueo CORS desde GitHub Pages.
+ * apiCall � Estrategia dual para evitar bloqueo CORS desde GitHub Pages.
  *
  * ESTRATEGIA 1 (principal): text/plain + body JSON
- *   → Petición "simple" CORS — NO dispara OPTIONS preflight.
- *   → GAS lee e.postData.contents y parsea el JSON.
+ *   ? Petici�n "simple" CORS � NO dispara OPTIONS preflight.
+ *   ? GAS lee e.postData.contents y parsea el JSON.
  *
  * ESTRATEGIA 2 (fallback): application/x-www-form-urlencoded
- *   → También es petición "simple" — garantizado sin preflight.
- *   → GAS lee e.parameter directamente.
+ *   ? Tambi�n es petici�n "simple" � garantizado sin preflight.
+ *   ? GAS lee e.parameter directamente.
  *
  * redirect:"follow" sigue el 302 que emite GAS sin error de red.
  */
 async function apiCall(action, payload = {}) {
   const bodyJson = JSON.stringify({ action, ...payload });
 
-  // ── ESTRATEGIA 1: text/plain ──────────────────────────────────────────────
+  // -- ESTRATEGIA 1: text/plain ----------------------------------------------
   try {
     const res = await fetch(_GAS_ENDPOINT, {
       method: 'POST',
@@ -67,10 +67,10 @@ async function apiCall(action, payload = {}) {
     const parsed = await _parseGasResponse(res);
     if (parsed !== null) return parsed;
   } catch (e1) {
-    console.warn('[FLOWUP] Estrategia 1 (text/plain) falló:', e1.message);
+    console.warn('[FLOWUP] Estrategia 1 (text/plain) fall�:', e1.message);
   }
 
-  // ── ESTRATEGIA 2: form-urlencoded (100% simple request) ──────────────────
+  // -- ESTRATEGIA 2: form-urlencoded (100% simple request) ------------------
   try {
     const formParams = new URLSearchParams();
     formParams.append('action', action);
@@ -86,11 +86,11 @@ async function apiCall(action, payload = {}) {
     const parsed = await _parseGasResponse(res);
     if (parsed !== null) return parsed;
   } catch (e2) {
-    console.warn('[FLOWUP] Estrategia 2 (form-urlencoded) falló:', e2.message);
+    console.warn('[FLOWUP] Estrategia 2 (form-urlencoded) fall�:', e2.message);
   }
 
   console.error('[FLOWUP] Ambas estrategias CORS fallaron para action:', action);
-  return { status: 'ERROR', message: 'Error de conexión con el servidor. Ambas estrategias de red fallaron.' };
+  return { status: 'ERROR', message: 'Error de conexi�n con el servidor. Ambas estrategias de red fallaron.' };
 }
 
 /** Helper: parsea la respuesta HTTP de GAS de forma robusta */
@@ -98,7 +98,7 @@ async function _parseGasResponse(response) {
   try {
     const rawText = await response.text();
     if (rawText.trim().startsWith('<')) {
-      console.warn('[FLOWUP] GAS devolvió HTML (error de permisos/config):', rawText.substring(0, 200));
+      console.warn('[FLOWUP] GAS devolvi� HTML (error de permisos/config):', rawText.substring(0, 200));
       return null;
     }
     const parsed = JSON.parse(rawText);
@@ -115,7 +115,7 @@ async function _parseGasResponse(response) {
   }
 }
 
-// ── TOAST NOTIFICATIONS ───────────────────────────────────────────────────────
+// -- TOAST NOTIFICATIONS -------------------------------------------------------
 function showToast(message, type = 'success') {
   const toast = document.getElementById('custom-toast');
   const toastMsg = document.getElementById('custom-toast-msg');
@@ -145,7 +145,7 @@ function showToast(message, type = 'success') {
   toast.classList.remove('hidden');
 }
 
-// ── PASSWORD VISIBILITY TOGGLE ("OJITO") ─────────────────────────────────────
+// -- PASSWORD VISIBILITY TOGGLE ("OJITO") -------------------------------------
 function togglePasswordVisibility(inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon = document.getElementById(iconId);
@@ -177,12 +177,12 @@ function togglePasswordVisibility(inputId, iconId) {
   }
 }
 
-// ── AUTHENTICATION ───────────────────────────────────────────────────────────
+// -- AUTHENTICATION -----------------------------------------------------------
 async function loginUser(email, password) {
   const cleanEmail = (email || '').trim().toLowerCase();
   const cleanPass = (password || '').trim();
 
-  // 1. LLAMADA REAL A REST API — sin bypass local para comerciales reales
+  // 1. LLAMADA REAL A REST API � sin bypass local para comerciales reales
   const res = await apiCall('loginUser', { email: cleanEmail, password: cleanPass });
 
   // El backend puede devolver datos en res.data o directamente en res (para OWNER)
@@ -202,12 +202,12 @@ async function loginUser(email, password) {
       token: userData.token || 'SESSION_ACTIVE'
     };
     saveSession(sessionData);
-    showToast('Sesión iniciada correctamente', 'success');
+    showToast('Sesi�n iniciada correctamente', 'success');
     setTimeout(() => { window.location.href = 'dashboard.html'; }, 300);
     return { status: 'SUCCESS', data: sessionData };
   }
 
-  // 2. FALLBACK DE DIAGNÓSTICO — solo para credenciales demo conocidas
+  // 2. FALLBACK DE DIAGN�STICO � solo para credenciales demo conocidas
   if (res.status === 'ERROR') {
     if ((cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') ||
         (cleanEmail === 'vendedor@democompany.com' && cleanPass === 'password123')) {
@@ -222,7 +222,7 @@ async function loginUser(email, password) {
         token: 'DIAGNOSTIC_SESSION_ACTIVE'
       };
       saveSession(fallbackUser);
-      showToast('Sesión iniciada (Modo Diagnóstico — API no disponible)', 'success');
+      showToast('Sesi�n iniciada (Modo Diagn�stico � API no disponible)', 'success');
       setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
       return { status: 'SUCCESS', data: fallbackUser };
     }
@@ -235,7 +235,7 @@ async function loginUser(email, password) {
 async function registerDemo(name, email, password) {
   const res = await apiCall('registerDemoTenant', { nombre_comercial: name, email_admin: email, password: password });
   if (res.status === 'SUCCESS') {
-    showToast('Cuenta Demo creada exitosamente. Iniciando sesión...', 'success');
+    showToast('Cuenta Demo creada exitosamente. Iniciando sesi�n...', 'success');
     await loginUser(email, password);
   } else {
     showToast(res.message || 'Error al registrar comercio demo.', 'error');
@@ -248,7 +248,7 @@ function logoutUser() {
   window.location.href = 'index.html';
 }
 
-// ── SELLERS MANAGEMENT ────────────────────────────────────────────────────────
+// -- SELLERS MANAGEMENT --------------------------------------------------------
 async function loadSellers() {
   const companyId = resolveCompanyId();
   if (!companyId) return;
@@ -261,7 +261,7 @@ async function loadSellers() {
   const res = await apiCall('getCompanyUsers', { companyId });
   if (res.status === 'SUCCESS' && Array.isArray(res.data)) {
     if (res.data.length === 0) {
-      container.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400 font-semibold">No hay vendedores registrados aún.</td></tr>';
+      container.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400 font-semibold">No hay vendedores registrados a�n.</td></tr>';
       return;
     }
 
@@ -290,7 +290,7 @@ async function createSeller(email, password) {
   const companyId = resolveCompanyId();
   const res = await apiCall('createSellerUser', { companyId, sellerEmail: email, password });
   if (res.status === 'SUCCESS') {
-    showToast('Vendedor agregado con éxito', 'success');
+    showToast('Vendedor agregado con �xito', 'success');
     loadSellers();
   } else {
     showToast(res.message || 'Error al agregar vendedor', 'error');
@@ -315,13 +315,13 @@ async function submitEditSeller(e) {
   if (btn) { btn.innerText = 'Actualizando...'; btn.disabled = true; }
 
   const res = await apiCall('updateSeller', { companyId: resolveCompanyId(), sellerEmail: email, newPassword });
-  if (btn) { btn.innerText = 'Actualizar Contraseña'; btn.disabled = false; }
+  if (btn) { btn.innerText = 'Actualizar Contrase�a'; btn.disabled = false; }
 
   if (res.status === 'SUCCESS') {
     document.getElementById('edit-seller-modal').classList.add('hidden');
     document.getElementById('form-edit-seller').reset();
     loadSellers();
-    showToast('Contraseña actualizada correctamente', 'success');
+    showToast('Contrase�a actualizada correctamente', 'success');
   } else {
     showToast('Error: ' + res.message, 'error');
   }
@@ -345,7 +345,7 @@ async function executeDeleteSeller() {
   if (btn) { btn.innerText = 'Eliminando...'; btn.disabled = true; }
 
   const res = await apiCall('deleteSeller', { companyId: resolveCompanyId(), sellerEmail: email });
-  if (btn) { btn.innerText = 'Sí, Eliminar'; btn.disabled = false; }
+  if (btn) { btn.innerText = 'S�, Eliminar'; btn.disabled = false; }
 
   document.getElementById('confirm-delete-modal').classList.add('hidden');
   _sellerToDelete = null;
@@ -358,7 +358,7 @@ async function executeDeleteSeller() {
   }
 }
 
-// ── METRICS & DASHBOARD ───────────────────────────────────────────────────────
+// -- METRICS & DASHBOARD -------------------------------------------------------
 async function loadDashboardMetrics() {
   const companyId = resolveCompanyId();
   if (!companyId) return;
@@ -372,7 +372,7 @@ async function loadDashboardMetrics() {
   }
 }
 
-// ── TEMPLATES / QUICK RESPONSES ──────────────────────────────────────────────
+// -- TEMPLATES / QUICK RESPONSES ----------------------------------------------
 async function loadQuickResponses() {
   const companyId = resolveCompanyId();
   if (!companyId) return;
@@ -401,11 +401,11 @@ window.deleteSeller = deleteSeller;
 window.executeDeleteSeller = executeDeleteSeller;
 window.showToast = showToast;
 
-// ── MASTER PANEL FUNCTIONS ────────────────────────────────────────────────────
+// -- MASTER PANEL FUNCTIONS ----------------------------------------------------
 /**
- * Autenticación exclusiva para SuperAdmin.
+ * Autenticaci�n exclusiva para SuperAdmin.
  * Llama a `authenticateMaster` en el backend.
- * Guarda la sesión como tipo 'MASTER' en sessionStorage (no localStorage).
+ * Guarda la sesi�n como tipo 'MASTER' en sessionStorage (no localStorage).
  */
 async function loginMaster(email, password) {
   const cleanEmail = (email || '').trim().toLowerCase();
@@ -430,7 +430,7 @@ async function loginMaster(email, password) {
     return { ok: true, data: sessionData };
   }
 
-  // 2. FALLBACK DE EMERGENCIA — solo si GAS no responde o la red falla
+  // 2. FALLBACK DE EMERGENCIA � solo si GAS no responde o la red falla
   if (res.status === 'ERROR' && cleanEmail === 'admin@flowup.app' && cleanPass === 'flowup2026') {
     const fallbackSession = {
       success: true,
@@ -442,7 +442,7 @@ async function loginMaster(email, password) {
       rol: 'SUPERADMIN'
     };
     sessionStorage.setItem('flowup_master_session', JSON.stringify(fallbackSession));
-    showToast('Acceso Master concedido (Modo Offline — API no disponible).', 'success');
+    showToast('Acceso Master concedido (Modo Offline � API no disponible).', 'success');
     return { ok: true, data: fallbackSession };
   }
 
@@ -471,14 +471,14 @@ async function loadMasterMetrics() {
 
 async function loadAllCompanies() {
   const session = getMasterSession();
-  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  if (!session) return { status: 'ERROR', message: 'Sin sesi�n master.' };
   const res = await apiCall('getMasterData', { masterToken: session.masterToken || session.token });
   return res;
 }
 
 async function updateCompanyLicense(companyId, plan, fechaVencimiento, estado) {
   const session = getMasterSession();
-  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  if (!session) return { status: 'ERROR', message: 'Sin sesi�n master.' };
   const res = await apiCall('updateLicense', {
     masterToken: session.masterToken || session.token,
     companyId,
@@ -493,7 +493,7 @@ async function updateCompanyLicense(companyId, plan, fechaVencimiento, estado) {
 
 async function saveMasterGeminiKey(apiKey) {
   const session = getMasterSession();
-  if (!session) return { status: 'ERROR', message: 'Sin sesión master.' };
+  if (!session) return { status: 'ERROR', message: 'Sin sesi�n master.' };
   const res = await apiCall('saveGeminiKey', {
     masterToken: session.masterToken || session.token,
     apiKey
