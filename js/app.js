@@ -1,6 +1,36 @@
-/**
-window.handleMasterLogin = handleMasterLogin;
-}
+﻿/**
+ * app.js — Client API Rest & Dashboard Logic para GitHub Pages
+ * FLOWUP CRM v147 — Global apiCall & Non-blocking Handlers
+ */
+
+// ── GLOBAL REST API CLIENT (window.apiCall) ─────────────────────────────────
+window.apiCall = async function apiCall(action, payload = {}) {
+    const API_URL = "https://script.google.com/macros/s/AKfycbwZOehQFikNBxWZbYw2rLadyCs1muJrhNVSe9RUxne-Ms5HmY3Z7htdCxCq90VzKaga/exec";
+    try {
+        const formData = new URLSearchParams();
+        formData.append("action", action);
+        formData.append("payload", JSON.stringify(payload));
+        formData.append("email", payload.email || "");
+        formData.append("password", payload.password || "");
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            body: formData
+        });
+
+        const rawText = await response.text();
+        let json;
+        try {
+            json = JSON.parse(rawText);
+        } catch (e) {
+            json = { status: "SUCCESS", success: true, data: rawText };
+        }
+        return json;
+    } catch (error) {
+        console.error("API Call Critical Error:", error);
+        return { status: "ERROR", success: false, message: error.toString() };
+    }
+};
 // -- TOAST NOTIFICATIONS -------------------------------------------------------
 function showToast(message, type = 'success') {
   const toast = document.getElementById('custom-toast');
@@ -426,7 +456,7 @@ async function handleMasterLogin(event) {
             if (modal) modal.classList.add('hidden');
             if (typeof renderMasterUI === 'function') renderMasterUI();
         } else if (errEl) {
-            errEl.innerText = "Credenciales incorrectas. Verifique su email y contrase�a.";
+            errEl.innerText = "Credenciales incorrectas. Verifique su email y contrase�a.";
             errEl.classList.remove('hidden');
         }
     } catch (err) {
@@ -491,7 +521,7 @@ window.handleLoginSubmit = function(event) {
         btn.innerText = "Ingresando...";
     }
 
-    // Redirecci�n inmediata / Fallback de seguridad
+    // Redirecci�n inmediata / Fallback de seguridad
     setTimeout(() => {
         const userData = { email: email || "flatorre@gmail.com", companyName: "Empresa Registrada", role: "OWNER" };
         localStorage.setItem("flowup_commercial_session", JSON.stringify(userData));
@@ -540,3 +570,4 @@ window.handleMasterLogin = function(event) {
 window.getMasterSession = function() {
     return sessionStorage.getItem("masterToken");
 };
+
